@@ -1,0 +1,41 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: sans-serif;
+}
+.App{
+    width: 100vw;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.info{
+    width: 100%;
+    position: absolute;
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.info-change {
+    &>button{
+        padding: 5px 10px;
+        margin-bottom: 10px;
+    }
+}
+
+.info-process {
+    max-height: 40vh;
+    overflow-y: scroll;
+}
+
+.board{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
