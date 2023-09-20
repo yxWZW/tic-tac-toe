@@ -1,6 +1,8 @@
 export interface SquareOptions {
-    value: string;
-    onSquareClick: Function;
+    value: Array<string>;
+    showArr: Array<GobangInfo>;
+    row: number;
+    col: number;
 }
 
 export interface BoardOptions {
@@ -25,6 +27,7 @@ export interface ProcessOptions {
 
 export interface GobangOptions {
     getGobangInfo: (e: Array<GobangInfo>) => void;
+    gameType: GameType;
     ref: GobangMethods;
 }
 
@@ -36,4 +39,10 @@ export interface GobangInfo {
 
 export type GobangMethods = {
     setCurrentMove: (e:number) => void;
+}
+
+export interface GameType {
+    size: number;
+    chess: Array<string>;
+    win: number;
 }
