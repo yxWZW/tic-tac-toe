@@ -1,7 +1,8 @@
+/* eslint-disable no-nested-ternary */
 import './index.css';
 import { useImperativeHandle, forwardRef } from 'react';
 import useHook from './useHook';
-import { ChildMethods, GobangOptions } from '@/interfaces/index';
+import { GobangMethods, GobangOptions } from '@/interfaces/index';
 
 /**
  * 五子棋组件
@@ -9,7 +10,7 @@ import { ChildMethods, GobangOptions } from '@/interfaces/index';
  * @param onRef 获取组件DOM元素
  * @returns 五子棋组件
  */
-const Gobang = forwardRef<ChildMethods, GobangOptions>((props, ref) => {
+const Gobang = forwardRef<GobangMethods, GobangOptions>((props, ref) => {
     const { getGobangInfo } = props;
 
     // 用于遍历生成棋盘
@@ -31,10 +32,9 @@ const Gobang = forwardRef<ChildMethods, GobangOptions>((props, ref) => {
                         {border.map((_item, colIndex) => (
                             <div className="chessboard-col" key={`col + ${colIndex}`}>
                                 <div className="chessboard-cell">
-                                    {
-                                        // eslint-disable-next-line no-nested-ternary
+                                    {   // 判断当前位置是否有落子
                                         showArr.find(item => item.row === rowIndex && item.col === colIndex)
-                                            ? (
+                                            ? ( // 判断落子类型
                                                 showArr.find((item) => item.row === rowIndex && item.col === colIndex)?.chess
                                                     ? (<div className="chessboard-cell-black" />)
                                                     : (<div className="chessboard-cell-white" />)

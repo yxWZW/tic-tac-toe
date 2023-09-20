@@ -28,8 +28,8 @@
 }
 
 .info-process {
-    max-height: 40vh;
-    overflow-y: scroll;
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
 .board{

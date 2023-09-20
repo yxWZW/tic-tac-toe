@@ -23,13 +23,9 @@ export interface ProcessOptions {
     setCurrentMove: Function;
 }
 
-export interface GobangDOMInfo extends HTMLDivElement {
-    setCurrentMove: (e:number) => void;
-}
-
 export interface GobangOptions {
     getGobangInfo: (e: Array<GobangInfo>) => void;
-    ref: ChildMethods;
+    ref: GobangMethods;
 }
 
 export interface GobangInfo {
@@ -38,6 +34,6 @@ export interface GobangInfo {
     chess: boolean;
 }
 
-export type ChildMethods = {
+export type GobangMethods = {
     setCurrentMove: (e:number) => void;
 }

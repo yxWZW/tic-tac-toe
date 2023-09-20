@@ -1,17 +1,6 @@
 import { useEffect, useState } from 'react';
 import { GobangInfo } from '@/interfaces/index';
-
-/**
- * 生成空的二维数组
- * @returns 20*20的空字符串数组
- */
-const createTargetArr = () => {
-    const arr = Array(20).fill('');
-    arr.map((_item, index) => {
-        arr[index] = Array(20).fill('');
-    });
-    return arr;
-};
+import { createTargetArr, countUpDownChess } from '@/utils/tool';
 
 export default (getGobangInfo: Function) => {
     // 记录下次落子的提示语
@@ -45,8 +34,8 @@ export default (getGobangInfo: Function) => {
      */
     const rollbackProcess = (move: number) => {
         setCurrentMove(move);
-        const newshowArr = [...playArr.slice(0, move + 1)];
-        setShowArr(newshowArr.slice(1) as Array<GobangInfo>);
+        const newshowArr = [...playArr.slice(0, move + 1)] as Array<GobangInfo>;
+        setShowArr(newshowArr.slice(1));
         setStatus(`Next player: ${move % 2 === 1 ? '白棋' : '黑棋'}`);
         setIsOver(false);
     };
@@ -56,11 +45,11 @@ export default (getGobangInfo: Function) => {
      * @param row 落子的横坐标
      * @param col 落子的纵坐标
      */
-    function play (row: number, col: number) {
+    const play = (row: number, col: number) => {
         if (isOver) {
             return;
         }
-        const newplayArr: Array<GobangInfo> = [...playArr.slice(0, currentMove + 1), { row, col, chess: xIsNext }] as Array<GobangInfo>;
+        const newplayArr = [...playArr.slice(0, currentMove + 1), { row, col, chess: xIsNext }] as Array<GobangInfo>;
         setplayArr(newplayArr);
         setShowArr(newplayArr.slice(1));
         if (getWinner(newplayArr.slice(1), xIsNext, chessArr, row, col)) {
@@ -72,7 +61,7 @@ export default (getGobangInfo: Function) => {
         setCurrentMove(newplayArr.length - 1);
         getGobangInfo(newplayArr);
         xIsNext = currentMove % 2 === 0;
-    }
+    };
 
     /**
      * 计算胜者
@@ -88,64 +77,11 @@ export default (getGobangInfo: Function) => {
         playArr.map((item) => {
             chessArr[item.row][item.col] = { ...item };
         });
-        // 分别对 上下，左右，左斜，右斜 方向进行判断是否产生 winner
-        let colCount = 0;
-        // 上下
-        for (let num_i = col + 1; num_i < 20; num_i++) {
-            if (chessArr[row][num_i].chess !== chess) break;
-            colCount++;
-        }
-        for (let num_i = col - 1; num_i >= 0; num_i--) {
-            if (chessArr[row][num_i].chess !== chess) break;
-            colCount++;
-        }
-        if (colCount >= 4) {
-            colCount = 0;
-            return true;
-        }
-        // 左右
-        let rowCount = 0;
-        for (let num_i = row + 1; num_i < 20; num_i++) {
-            if (chessArr[num_i][col].chess !== chess) break;
-            rowCount++;
-        }
-        for (let num_i = row - 1; num_i >= 0; num_i--) {
-            if (chessArr[num_i][col].chess !== chess) break;
-            rowCount++;
-        }
-        if (rowCount >= 4) {
-            rowCount = 0;
-            return true;
-        }
-        // 左斜
-        let leftObliqueCount = 0;
-        for (let num_i = row + 1, num_j = col - 1; num_i < 20 && num_j >= 0; num_i++, num_j--) {
-            if (chessArr[num_i][num_j].chess !== chess) break;
-            leftObliqueCount++;
-        }
-        for (let num_i = row - 1, num_j = col + 1; num_i >= 0 && num_j < 20; num_i--, num_j++) {
-            if (chessArr[num_i][num_j].chess !== chess) break;
-            leftObliqueCount++;
-        }
-        if (leftObliqueCount >= 4) {
-            leftObliqueCount = 0;
-            return true;
-        }
-        // 右斜
-        let rightObliqueCount = 0;
-        for (let num_i = row + 1, num_j = col + 1; num_i < 20 && num_j < 20; num_i++, num_j++) {
-            if (chessArr[num_i][num_j].chess !== chess) break;
-            rightObliqueCount++;
-        }
-        for (let num_i = row - 1, num_j = col - 1; num_i >= 0 && num_j >= 0; num_i--, num_j--) {
-            if (chessArr[num_i][num_j].chess !== chess) break;
-            rightObliqueCount++;
-        }
-        if (rightObliqueCount >= 4) {
-            rightObliqueCount = 0;
-            return true;
-        }
-        return false;
+        // 分别对 上下，左右，左斜，右斜 方向进行判断是否产生胜者
+        return countUpDownChess(chessArr, row, col, chess, [0, 1]) ||
+               countUpDownChess(chessArr, row, col, chess, [1, 0]) ||
+               countUpDownChess(chessArr, row, col, chess, [1, 1]) ||
+               countUpDownChess(chessArr, row, col, chess, [-1, 1]);
     }
 
     return {

@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import Tictactoe from './components/Tictactoe';
 import Gobang from './components/Gobang';
 import Process from '@/components/Process';
-import { GobangInfo, ChildMethods } from '@/interfaces/index';
+import { GobangInfo, GobangMethods } from '@/interfaces/index';
 
 /**
  * 根组件
@@ -28,7 +28,7 @@ function App () {
         if (type) {
             setType(type);
         }
-    }, []);
+    }, [type]);
 
     /**
      * 切换游戏类型
@@ -49,7 +49,7 @@ function App () {
         setGobangHistory(newplayArr);
     };
 
-    const gobangRef = useRef<ChildMethods>(null!);
+    const gobangRef = useRef<GobangMethods>(null!);
     /**
      * 获取子组件中的方法
      * @param move 回退的步骤数
