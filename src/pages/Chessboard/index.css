@@ -1,0 +1,22 @@
+.chessboard-title{
+	text-align: center;
+	margin-bottom: 20px;
+}
+
+.chessboard {
+	display: flex;
+    flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.chessboard-row {
+    display: flex;
+}
+
+.chessboard-cell {
+	border: 1px solid rgb(131, 130, 130);
+	width: 25px;
+	height: 25px;
+    z-index: 50;
+}

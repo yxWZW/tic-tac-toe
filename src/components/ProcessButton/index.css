@@ -1,0 +1,9 @@
+button {
+    padding: 2px 5px;
+    border-radius: 5px;
+}
+
+.current-button {
+    padding: 5px 8px;
+    background-color: #727272a4;
+}

@@ -1,94 +1,55 @@
-import './App.css';
-import { useState, useEffect, useRef } from 'react';
-import Tictactoe from './components/Tictactoe';
-import Gobang from './components/Gobang';
+import { useCallback, useState } from 'react';
+import Chessboard from '@/pages/Chessboard';
 import Process from '@/components/Process';
-import { GobangInfo, ChildMethods } from '@/interfaces/index';
+import { useAppSelector, useAppDispatch } from '@/interfaces/hooks';
+import { setType } from '@/store/gameSlice';
+import './App.css';
 
 /**
  * 根组件
- * @returns 根组件
  */
-function App () {
-    // 区别游戏类别
-    const [type, setType] = useState('tic');
-    // 用于记录棋盘上每一步中每个格子的状态
-    const [history, setHistory] = useState([Array(9).fill(null)]);
-    // 当前进行的历史状态索引
-    const [currentMove, setCurrentMove] = useState(0);
-    // 记录当前历史接下来应该下棋的对象（默认最开始是 X先下，之后是 O）
-    const xIsNext = currentMove % 2 === 0;
-    // 当前历史索引对应历史状态下的棋盘状态
-    const currentSquares = history[currentMove];
-    // 五子棋组件需要传递给步骤组件的数据
-    const [gobangHistory, setGobangHistory] = useState<Array<GobangInfo>>([]);
+const App = () => {
+    const gameState = useAppSelector((state) => state.gameSlice);
+    const dispatch = useAppDispatch();
 
-    useEffect(() => {
-        const type = localStorage.getItem('gameType');
-        if (type) {
-            setType(type);
-        }
+    // 当前是否处于回退状态
+    const [isRollback, setIsRollback] = useState<boolean>(false);
+    // 当前回退数
+    const [rollbackMove, setRollbackMove] = useState<number>(0);
+    // 当前棋盘上棋子总数
+    const [showArrLength, setShowArrLength] = useState<number>(0);
+
+    /**
+     * 修改父组件数据的方法
+     * @param value 修改之后的值
+     * @param type 变量类型
+     */
+    const onSetProps = useCallback((value: number | boolean, type: string) =>  {
+        if (type === 'isRollback') setIsRollback(value as boolean);
+        else if (type === 'rollbackMove') setRollbackMove(value as number);
+        else if (type === 'showArrLength') setShowArrLength(value as number);
     }, []);
 
-    /**
-     * 切换游戏类型
-     * @param type 游戏类型
-     */
-    const changeType = (type: string) => {
-        type = type === 'tic' ? 'gob' : 'tic';
-        setType(type);
-        localStorage.setItem('gameType', type);
-    };
-
-    /**
-     * 获取子组件中的数据
-     * @param playArr 当前棋盘上所有落子形成的集合
-     */
-    const getGobangInfo = (playArr: Array<GobangInfo>) => {
-        const newplayArr = playArr;
-        setGobangHistory(newplayArr);
-    };
-
-    const gobangRef = useRef<ChildMethods>(null!);
-    /**
-     * 获取子组件中的方法
-     * @param move 回退的步骤数
-     */
-    const setGobangCurrentMove = (move: number) => {
-        gobangRef.current?.setCurrentMove(move);
-    };
+    // 子组件的Props
+    const ChessboardPropsInfo = { isRollback, rollbackMove, onSetProps };
+    const ProcessPropsInfo = { showArrLength, rollbackMove, onSetProps };
 
     return (
         <div className="App">
             <div className="info">
                 <div className="info-change">
-                    <button onClick={() => changeType(type)}>切换游戏类型</button>
-                    <h2>{type === 'tic' ? '井字棋' : '五子棋'}</h2>
+                    <button onClick={async () => await dispatch(setType())}>切换游戏类型</button>
+                    <h2>{gameState.typeIndex ? '五子棋' : '井字棋'}</h2>
                 </div>
                 <div className="info-process">
-                    {
-                        type === 'tic'
-                            ? <Process history={history} setCurrentMove={setCurrentMove}/>
-                            : <Process history={gobangHistory} setCurrentMove={setGobangCurrentMove} />
-                    }
+                    {<Process {...ProcessPropsInfo}/>}
                 </div>
             </div>
             <div className="board">
-                {
-                    type === 'tic'
-                        ? <Tictactoe
-                            history={history}
-                            xIsNext={xIsNext}
-                            currentMove={currentMove}
-                            currentSquares={currentSquares}
-                            setHistory={setHistory}
-                            setCurrentMove={setCurrentMove}
-                        />
-                        : <Gobang getGobangInfo={getGobangInfo} ref={gobangRef} />
-                }
+                {<Chessboard {...ChessboardPropsInfo}/>}
             </div>
         </div>
     );
-}
+};
 
 export default App;

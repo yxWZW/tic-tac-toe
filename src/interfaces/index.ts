@@ -1,43 +1,41 @@
 export interface SquareOptions {
-    value: string;
-    onSquareClick: Function;
+    value: Array<string>;
+    chessType: boolean;
 }
-
-export interface BoardOptions {
-    xIsNext: boolean;
-    squares: Array<string>;
-    onPlay: Function;
-}
-
-export interface TictactoeOptions {
-    history: Array<Array<string>>;
-    xIsNext: boolean;
-    currentMove: number;
-    currentSquares: Array<string>;
-    setHistory: Function;
-    setCurrentMove: Function;
-}
-
-export interface ProcessOptions {
-    history: Array<GobangInfo> | Array<Array<string>>;
-    setCurrentMove: Function;
-}
-
-export interface GobangDOMInfo extends HTMLDivElement {
-    setCurrentMove: (e:number) => void;
-}
-
-export interface GobangOptions {
-    getGobangInfo: (e: Array<GobangInfo>) => void;
-    ref: ChildMethods;
-}
-
-export interface GobangInfo {
+export interface ChessInfo {
     row: number;
     col: number;
     chess: boolean;
 }
+export interface GameType {
+    size: number;
+    chess: Array<string>;
+    win: number;
+}
+export interface HistoryInfo {
+    historyResult: boolean;
+    historyArr: Array<ChessInfo>;
+    historyMove: number;
+}
+export interface CounterState {
+    types: Array<GameType>;
+    typeIndex: number;
+    history: Array<HistoryInfo>;
+}
+export interface ProcessProps {
+    showArrLength: number;
+    rollbackMove: number;
+    onSetProps: (e: number | boolean, l: string) => void;
+}
+export interface ChessboardProps {
+    isRollback: boolean;
+    rollbackMove: number;
+    onSetProps: (e: number | boolean, l: string) => void;
+}
 
-export type ChildMethods = {
-    setCurrentMove: (e:number) => void;
+export interface ProcessbuttonProps {
+    description: string;
+    currentMove: number;
+    move: number;
+    rollbackClick: (e: number) => void;
 }
