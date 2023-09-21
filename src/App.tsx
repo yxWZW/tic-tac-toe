@@ -1,8 +1,8 @@
-import './App.css';
 import { useState, useEffect, useRef } from 'react';
-import Process from '@/components/Process';
-import { GobangInfo, GobangMethods } from '@/interfaces/index';
+import { GobangInfo, GobangMethods, GameType } from '@/interfaces/index';
 import Chessboard from '@/pages/Chessboard';
+import Process from '@/components/Process';
+import './App.css';
 
 /**
  * 根组件
@@ -10,7 +10,7 @@ import Chessboard from '@/pages/Chessboard';
  */
 const App = () => {
     // 游戏参数
-    const types = [
+    const types: Array<GameType> = [
         {
             size: 3,
             chess: ['X', 'O'],
@@ -23,7 +23,7 @@ const App = () => {
         },
     ];
 
-    const [typeIndex, setTypeIndex] = useState(0);
+    const [typeIndex, setTypeIndex] = useState<number>(0);
 
     // 五子棋组件需要传递给步骤组件的数据
     const [history, setHistory] = useState<Array<GobangInfo>>([]);

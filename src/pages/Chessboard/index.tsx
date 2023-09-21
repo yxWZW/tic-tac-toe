@@ -1,13 +1,11 @@
 import { useEffect, useState, useImperativeHandle, forwardRef } from 'react';
-import Square from '@/components/Square';
-import { createTargetArr, countUpDownChess } from '@/utils/tool';
 import { GobangMethods, GobangOptions, GobangInfo } from '@/interfaces/index';
+import { createTargetArr, countUpDownChess } from '@/utils/tool';
+import Square from '@/components/Square';
 import './index.css';
 
 /**
  * 棋盘组件
- * @param xIsNext 判断下一步落子的类型
- * @param squares 当前棋盘状态
  */
 const Chessboard = forwardRef<GobangMethods, GobangOptions>((props, ref) => {
     const { gameType, getGobangInfo } = props;
@@ -15,32 +13,32 @@ const Chessboard = forwardRef<GobangMethods, GobangOptions>((props, ref) => {
     const border = Array(size).fill(null);
 
     // 游戏结束状态
-    const [isOver, setIsOver] = useState(false);
+    const [isOver, setIsOver] = useState<boolean>(false);
 
     // 当前棋盘上所有落子形成的集合，包含每个落子的横纵坐标和类型
-    const [playArr, setplayArr] = useState([{}]);
+    const [playArr, setplayArr] = useState<Array<GobangInfo>>([]);
 
     // 用于棋盘上展示的落子的集合
     const [showArr, setShowArr] = useState<Array<GobangInfo>>([]);
 
     // 当前进行的历史状态索引
-    const [currentMove, setCurrentMove] = useState(0);
+    const [currentMove, setCurrentMove] = useState<number>(0);
 
     // 记录当前棋盘上落子的点阵图
     const [chessArr, setChessArr] = useState<Array<Array<GobangInfo>>>(createTargetArr(size));
 
     // 记录当前落子的类型
-    let xIsNext = currentMove % 2 === 0;
+    let xIsNext: boolean = currentMove % 2 === 0;
 
     useEffect(() => {
-        getGobangInfo(playArr as Array<GobangInfo>);
+        getGobangInfo(playArr);
     }, [playArr]);
 
     // 游戏类型更换，重置数据源
     useEffect(() => {
         setIsOver(false);
         setShowArr([]);
-        setplayArr([{}]);
+        setplayArr([]);
         setCurrentMove(0);
         setChessArr(createTargetArr(size));
     }, [size]);
@@ -52,9 +50,16 @@ const Chessboard = forwardRef<GobangMethods, GobangOptions>((props, ref) => {
      */
     const rollbackProcess = (move: number) => {
         setCurrentMove(move);
-        const newshowArr = [...playArr.slice(0, move + 1)] as Array<GobangInfo>;
-        setShowArr(newshowArr.slice(1));
-        move === playArr.length - 1 ? setIsOver(true) : setIsOver(false);
+        const newshowArr = [...playArr.slice(0, move)];
+        const showArrEnd = newshowArr[newshowArr.length - 1];
+        xIsNext = (newshowArr.length - 1) % 2 === 0;
+        setShowArr(newshowArr);
+        // 如果回退到最新的一步，才判断是否有胜者出现
+        if (move === playArr.length && getWinner(newshowArr, xIsNext, chessArr, showArrEnd.row, showArrEnd.col)) {
+            setIsOver(true);
+        } else {
+            setIsOver(false);
+        }
     };
 
     /**
@@ -66,12 +71,12 @@ const Chessboard = forwardRef<GobangMethods, GobangOptions>((props, ref) => {
         if (isOver) {
             return;
         }
-        const newplayArr = [...playArr.slice(0, currentMove + 1), { row, col, chess: xIsNext }] as Array<GobangInfo>;
+        const newplayArr = [...playArr.slice(0, currentMove), { row, col, chess: xIsNext }];
         setplayArr(newplayArr);
-        setShowArr(newplayArr.slice(1));
-        setCurrentMove(newplayArr.length - 1);
+        setShowArr(newplayArr);
+        setCurrentMove(newplayArr.length);
         getGobangInfo(newplayArr);
-        if (getWinner(newplayArr.slice(1), xIsNext, chessArr, row, col)) {
+        if (getWinner(newplayArr, xIsNext, chessArr, row, col)) {
             setIsOver(true);
         }
         xIsNext = currentMove % 2 === 0;

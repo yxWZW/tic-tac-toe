@@ -8,7 +8,8 @@ import './index.css';
  * @returns 步骤分步展示组件
  */
 const Process = ({ history, setCurrentMove }: ProcessOptions) => {
-    const processArr = history.map((_item, move) => {
+    const process = Array(history.length + 1).fill('');
+    const processLi = process.map((_item, move) => {
         const description = move > 0 ? `Go to move #${move}` : 'Go to game start';
         return (
             <li key={move}>
@@ -18,7 +19,7 @@ const Process = ({ history, setCurrentMove }: ProcessOptions) => {
     });
 
     return (
-        <ol> {processArr} </ol>
+        <ol> {processLi} </ol>
     );
 };
 
