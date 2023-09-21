@@ -1,88 +1,74 @@
-import './App.css';
-import { useState, useEffect, useRef } from 'react';
-import Process from '@/components/Process';
-import { GobangInfo, GobangMethods } from '@/interfaces/index';
+import { Component, ReactNode } from 'react';
+import { connect } from 'react-redux';
+import { setType } from '@/store/gameSlice';
 import Chessboard from '@/pages/Chessboard';
+import Process from '@/components/Process';
+import { AppProps, AppState } from '@/interfaces/index';
+import './App.css';
 
 /**
  * 根组件
- * @returns 根组件
+ * @param typeIndex 游戏类型索引
+ * @param setType 修改游戏类型索引
  */
-const App = () => {
-    // 游戏参数
-    const types = [
-        {
-            size: 3,
-            chess: ['X', 'O'],
-            win: 3,
-        },
-        {
-            size: 15,
-            chess: ['black', 'white'],
-            win: 5,
-        },
-    ];
-
-    const [typeIndex, setTypeIndex] = useState(0);
-
-    // 五子棋组件需要传递给步骤组件的数据
-    const [history, setHistory] = useState<Array<GobangInfo>>([]);
-
-    useEffect(() => {
-        const typeIndex = localStorage.getItem('gameType');
-        if (typeIndex) {
-            setTypeIndex(Number(typeIndex));
-        }
-    }, [setTypeIndex]);
+class App extends Component<AppProps, AppState> {
+    constructor (props: AppProps) {
+        super(props);
+        this.state = {
+            isRollback: false, // 当前是否处于回退状态
+            rollbackMove: 0,   // 当前回退数
+            showArrLength: 0,  // 当前棋盘上棋子总数
+        };
+    }
 
     /**
-     * 切换游戏类型
-     * @param type 游戏类型
+     * 修改父组件数据的方法
+     * @param value 修改之后的值
+     * @param type 变量类型
      */
-    const changeType = (typeIndex: number) => {
-        typeIndex = Number(!typeIndex);
-        setTypeIndex(typeIndex);
-        localStorage.setItem('gameType', typeIndex.toString());
-    };
+    onSetProps = (value: number | boolean, type: string) => {
+        if (type === 'isRollback') this.setState({ isRollback: value as boolean });
+        else if (type === 'rollbackMove') this.setState({ rollbackMove: value as number });
+        else if (type === 'showArrLength') this.setState({ showArrLength: value as number });
+    }
 
-    /**
-     * 获取子组件中的数据
-     * @param playArr 当前棋盘上所有落子形成的集合
-     */
-    const getGobangInfo = (playArr: Array<GobangInfo>) => {
-        const newplayArr = playArr;
-        setHistory(newplayArr);
-    };
+    render (): ReactNode {
+        const { isRollback, rollbackMove, showArrLength } = this.state;
+        const { onSetProps } = this;
+        const ChessboardPropsInfo = { isRollback, rollbackMove, onSetProps };
+        const ProcessPropsInfo = { showArrLength, rollbackMove, onSetProps };
 
-    const gobangRef = useRef<GobangMethods>(null!);
-    /**
-     * 获取子组件中的方法
-     * @param move 回退的步骤数
-     */
-    const setBoardCurrentMove = (move: number) => {
-        gobangRef.current?.setCurrentMove(move);
-    };
-
-    return (
-        <div className="App">
-            <div className="info">
-                <div className="info-change">
-                    <button onClick={() => changeType(typeIndex)}>切换游戏类型</button>
-                    <h2>{typeIndex ? '五子棋' : '井字棋'}</h2>
+        return (
+            <div className="App">
+                <div className="info">
+                    <div className="info-change">
+                        <button onClick={() => this.props.setType()}>切换游戏类型</button>
+                        <h2>{this.props.typeIndex ? '五子棋' : '井字棋'}</h2>
+                    </div>
+                    <div className="info-process">
+                        {<Process {...ProcessPropsInfo}/>}
+                    </div>
                 </div>
-                <div className="info-process">
-                    {
-                        <Process history={history} setCurrentMove={setBoardCurrentMove}/>
-                    }
+                <div className="board">
+                    {<Chessboard {...ChessboardPropsInfo}/>}
                 </div>
             </div>
-            <div className="board">
-                {
-                    <Chessboard gameType={types[typeIndex]} getGobangInfo={getGobangInfo} ref={gobangRef}></Chessboard>
-                }
-            </div>
-        </div>
-    );
+        );
+    }
+}
+
+/**
+ * 建立组件跟 store的 state的映射关系
+ */
+const mapStateToProps = (state: any) => {
+    return { typeIndex: state.gameSlice.typeIndex };
 };
 
-export default App;
+/**
+ * 建立组件跟 store.dispatch的映射关系
+ */
+const mapDispatchToProps = (dispatch: any) => {
+    return { setType: () => dispatch(setType()) };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

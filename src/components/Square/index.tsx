@@ -1,16 +1,31 @@
-import { SquareOptions } from '@/interfaces';
+import { SquareOptions } from '@/interfaces/index';
+import { Component, ReactNode } from 'react';
 import './index.css';
 
 /**
- * 棋盘布局单元组件
- * @param value 棋子类别
- * @param onSquareClick 落子事件
+ * 棋子组件
+ * @param chessType 棋子类别
+ * @param value 棋子类别数组
  */
-const Square = ({ showArr, value, row, col }: SquareOptions) => {
-    const chess = value[Number(showArr.find((item) => item.row === row && item.col === col)?.chess)];
-    return (
-        <div className={`chessboard-cell-${chess}`} />
-    );
-};
+class Square extends Component<SquareOptions> {
+    /**
+     * 控制棋子组件的渲染
+     */
+    shouldComponentUpdate (nextProps: SquareOptions) {
+        if (this.props.chessType === nextProps.chessType) return false;
+        return true;
+    }
+
+    render (): ReactNode {
+        // console.log('Square渲染了');
+        const { chessType, value } = this.props;
+        const chess = value[Number(chessType)] || 'click';
+        return (
+            <div className={`chessboard-cell-${chess}`}
+                chess-type={`${chess}`}
+            />
+        );
+    }
+}
 
 export default Square;
