@@ -1,6 +1,6 @@
 import { useEffect, useState, useImperativeHandle, forwardRef } from 'react';
 import { GobangMethods, GobangOptions, GobangInfo } from '@/interfaces/index';
-import { createTargetArr, countUpDownChess } from '@/utils/tool';
+import { createTargetArr, countWinChess } from '@/utils/tool';
 import Square from '@/components/Square';
 import './index.css';
 
@@ -96,11 +96,7 @@ const Chessboard = forwardRef<GobangMethods, GobangOptions>((props, ref) => {
         playArr.map((item) => {
             chessArr[item.row][item.col] = { ...item };
         });
-        // 分别对 上下，左右，左斜，右斜 方向进行判断是否产生胜者
-        return countUpDownChess(chessArr, row, col, chess, [0, 1], size, win) ||
-               countUpDownChess(chessArr, row, col, chess, [1, 0], size, win) ||
-               countUpDownChess(chessArr, row, col, chess, [1, 1], size, win) ||
-               countUpDownChess(chessArr, row, col, chess, [-1, 1], size, win);
+        return countWinChess(chessArr, row, col, chess, size, win);
     };
 
     useImperativeHandle(ref, () => {
