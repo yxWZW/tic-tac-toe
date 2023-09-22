@@ -1,48 +1,62 @@
-import { useRef } from 'react';
-import { GobangMethods } from '@/interfaces/index';
+import { Component, ReactNode } from 'react';
 import Chessboard from '@/pages/Chessboard';
 import Process from '@/components/Process';
-import { useAppSelector, useAppDispatch } from '@/interfaces/hooks';
+import { AppProps, AppState } from '@/interfaces/index';
 import { setType } from '@/store/gameSlice';
+import { connect } from 'react-redux';
 import './App.css';
+
 
 /**
  * 根组件
  * @returns 根组件
  */
-const App = () => {
-    const gameState = useAppSelector((state) => state.gameSlice);
-    const dispatch = useAppDispatch();
+class App extends Component<AppProps, AppState> {
+    constructor (props: AppProps) {
+        super(props);
+        this.state  = { isRollback: false };
+    }
 
-    const chessboardRef = useRef<GobangMethods>(null!);
-    /**
-     * 获取子组件中的方法
-     * @param move 回退的步骤数
-     */
-    const setBoardCurrentMove = (move: number) => {
-        chessboardRef.current?.setCurrentMove(move);
-    };
+    setIsRollback = (arg: boolean) => {
+        this.setState({ isRollback: arg });
+    }
 
-    return (
-        <div className="App">
-            <div className="info">
-                <div className="info-change">
-                    <button onClick={async () => await dispatch(setType())}>切换游戏类型</button>
-                    <h2>{gameState.typeIndex ? '五子棋' : '井字棋'}</h2>
+    render (): ReactNode {
+        return (
+            <div className="App">
+                <div className="info">
+                    <div className="info-change">
+                        <button onClick={() => this.props.setType()}>切换游戏类型</button>
+                        <h2>{this.props.typeIndex ? '五子棋' : '井字棋'}</h2>
+                    </div>
+                    <div className="info-process">
+                        {
+                            <Process isRollback={this.state.isRollback} setIsRollback={this.setIsRollback}/>
+                        }
+                    </div>
                 </div>
-                <div className="info-process">
+                <div className="board">
                     {
-                        <Process setCurrentMove={setBoardCurrentMove} />
+                        <Chessboard isRollback={this.state.isRollback} setIsRollback={this.setIsRollback}/>
                     }
                 </div>
             </div>
-            <div className="board">
-                {
-                    <Chessboard ref={chessboardRef}></Chessboard>
-                }
-            </div>
-        </div>
-    );
+        );
+    }
+}
+
+/**
+ * @param state
+ */
+const mapStateToProps = (state: any) => {
+    return { typeIndex: state.gameSlice.typeIndex };
 };
 
-export default App;
+/**
+ * @param dispatch
+ */
+const mapDispatchToProps = (dispatch: any) => {
+    return { setType: () => dispatch(setType()) };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

@@ -1,4 +1,4 @@
-import { GobangInfo } from '@/interfaces/index';
+import { chessInfo } from '@/interfaces/index';
 
 /**
  * 生成空的二维数组
@@ -22,7 +22,7 @@ export const createTargetArr = (size: number) => {
  * @param win 胜利条件
  * @returns 胜负结果
  */
-export const countWinChess = (chessArr: Array<Array<GobangInfo>>, row: number, col: number, chess: boolean, size: number, win: number): boolean => {
+export const countWinChess = (chessArr: Array<Array<chessInfo>>, row: number, col: number, chess: boolean, size: number, win: number): boolean => {
     const moveSteps = [[0, 1], [1, 0], [1, 1], [-1, 1]];
 
     /**

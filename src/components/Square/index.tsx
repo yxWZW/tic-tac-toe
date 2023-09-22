@@ -1,4 +1,5 @@
 import { SquareOptions } from '@/interfaces';
+import { Component, ReactNode } from 'react';
 import './index.css';
 
 /**
@@ -8,11 +9,14 @@ import './index.css';
  * @param row 落子的横坐标
  * @param row 落子的纵坐标
  */
-const Square = ({ showArr, value, row, col }: SquareOptions) => {
-    const chess = value[Number(showArr.find((item) => item.row === row && item.col === col)?.chess)];
-    return (
-        <div className={`chessboard-cell-${chess}`} />
-    );
-};
+class Square extends Component<SquareOptions> {
+    render (): ReactNode {
+        const { showArr, value, row, col } = this.props;
+        const chess = value[Number(showArr.find((item) => item.row === row && item.col === col)?.chess)];
+        return (
+            <div className={`chessboard-cell-${chess}`} />
+        );
+    }
+}
 
 export default Square;

@@ -1,8 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { CounterState } from '@/interfaces/index';
+import { GameStateOptions } from '@/interfaces/index';
 
-// 使用该类型定义初始 state
-const initialState: CounterState = {
+const initialState: GameStateOptions = {
     types: [ // 游戏类型
         {
             size: 3,
@@ -20,11 +19,12 @@ const initialState: CounterState = {
     currentMove: 0, // 当前进行的历史状态索引
 };
 
-export const counterSlice = createSlice({
+export const gameSlice = createSlice({
     name: 'gameSlice',
     initialState,
     reducers: {
         setType: (state) => {
+            // console.log(state.typeIndex);
             state.typeIndex = Number(!state.typeIndex);
         },
         setPlayArr: (state, action) => {
@@ -36,5 +36,5 @@ export const counterSlice = createSlice({
     },
 });
 
-export const { setType, setPlayArr, setCurrentMove } = counterSlice.actions;
-export default counterSlice.reducer;
+export const { setType, setPlayArr, setCurrentMove } = gameSlice.actions;
+export default gameSlice.reducer;

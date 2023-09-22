@@ -1,42 +1,21 @@
 export interface SquareOptions {
     value: Array<string>;
-    showArr: Array<GobangInfo>;
+    showArr: Array<chessInfo>;
     row: number;
     col: number;
 }
 
-export interface BoardOptions {
-    xIsNext: boolean;
-    squares: Array<string>;
-    onPlay: Function;
-}
-
-export interface TictactoeOptions {
-    history: Array<Array<string>>;
-    xIsNext: boolean;
-    currentMove: number;
-    currentSquares: Array<string>;
-    setHistory: Function;
+export interface ProcessProps {
     setCurrentMove: Function;
+    playArr: Array<chessInfo>;
+    isRollback: boolean;
+    setIsRollback: (e: boolean) => void;
 }
 
-export interface ProcessOptions {
-    setCurrentMove: Function;
-}
-
-export interface GobangOptions {
-    getGobangInfo: (e: Array<GobangInfo>) => void;
-    ref: GobangMethods;
-}
-
-export interface GobangInfo {
+export interface chessInfo {
     row: number;
     col: number;
     chess: boolean;
-}
-
-export type GobangMethods = {
-    setCurrentMove: (e:number) => void;
 }
 
 export interface GameType {
@@ -45,9 +24,43 @@ export interface GameType {
     win: number;
 }
 
-export interface CounterState {
+export interface GameStateOptions {
     types: Array<GameType>;
     typeIndex: number;
-    playArr: Array<GobangInfo>;
+    playArr: Array<chessInfo>;
     currentMove: number;
 }
+
+export interface ChessboardState {
+    isOver: boolean;
+    xIsNext: boolean;
+    showArr: Array<chessInfo>;
+    chessArr: Array<Array<chessInfo>>;
+}
+
+export interface ChessboardProps {
+    currentMove: number;
+    typeIndex: number;
+    playArr: Array<chessInfo>;
+    size: number;
+    win: number;
+    chess: Array<string>;
+    isRollback: boolean;
+    setPlayArr: (e: Array<chessInfo>) => void;
+    setCurrentMove: (e: number) => void;
+    setIsRollback: (e: boolean) => void;
+}
+
+export interface ChessboardRefs {
+    rollbackProcess: (e: number) => void;
+}
+
+export interface AppProps {
+    typeIndex: number;
+    setType: () => void;
+}
+
+export interface AppState {
+    isRollback: boolean;
+}
+
