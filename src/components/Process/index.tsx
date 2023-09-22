@@ -1,4 +1,5 @@
 import { ProcessOptions } from '@/interfaces';
+import { useAppSelector } from '@/interfaces/hooks';
 import './index.css';
 
 /**
@@ -7,19 +8,22 @@ import './index.css';
  * @param setCurrentMove 改变回退的步骤数的方法
  * @returns 步骤分步展示组件
  */
-const Process = ({ history, setCurrentMove }: ProcessOptions) => {
-    const process = Array(history.length + 1).fill('');
-    const processLi = process.map((_item, move) => {
-        const description = move > 0 ? `Go to move #${move}` : 'Go to game start';
-        return (
-            <li key={move}>
-                <button onClick={() => setCurrentMove(move)}>{description}</button>
-            </li>
-        );
-    });
+const Process = ({ setCurrentMove }: ProcessOptions) => {
+    const gameState = useAppSelector((state) => state.gameSlice);
+    const { playArr } = gameState;
+    const process = Array(playArr.length + 1).fill('');
 
     return (
-        <ol> {processLi} </ol>
+        <ol>
+            {process.map((_item, move) => {
+                const description = move > 0 ? `Go to move #${move}` : 'Go to game start';
+                return (
+                    <li key={move}>
+                        <button onClick={() => setCurrentMove(move)}>{description}</button>
+                    </li>
+                );
+            })}
+        </ol>
     );
 };
 

@@ -21,13 +21,11 @@ export interface TictactoeOptions {
 }
 
 export interface ProcessOptions {
-    history: Array<GobangInfo> | Array<Array<string>>;
     setCurrentMove: Function;
 }
 
 export interface GobangOptions {
     getGobangInfo: (e: Array<GobangInfo>) => void;
-    gameType: GameType;
     ref: GobangMethods;
 }
 
@@ -45,4 +43,11 @@ export interface GameType {
     size: number;
     chess: Array<string>;
     win: number;
+}
+
+export interface CounterState {
+    types: Array<GameType>;
+    typeIndex: number;
+    playArr: Array<GobangInfo>;
+    currentMove: number;
 }

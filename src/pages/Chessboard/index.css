@@ -5,8 +5,13 @@
 
 .chessboard {
 	display: flex;
+    flex-direction: column;
 	justify-content: center;
 	align-items: center;
+}
+
+.chessboard-row {
+    display: flex;
 }
 
 .chessboard-cell {
@@ -17,11 +22,11 @@
 	justify-content: center;
 	align-items: center;
 	box-sizing: border-box;
-} 
+}
 
 .chessboard-cell-click {
 	width: 20px;
 	height: 20px;
-	position: absolute;
-	z-index: 12;
+    position: absolute;
+    z-index: 20;
 }

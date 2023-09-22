@@ -4,7 +4,7 @@ import { GobangInfo } from '@/interfaces/index';
  * 生成空的二维数组
  * @returns 20*20的空字符串数组
  */
-export const createTargetArr = (size: number): Array<Array<string>> => {
+export const createTargetArr = (size: number) => {
     const arr = Array(size).fill('');
     arr.map((_item, index) => {
         arr[index] = Array(size).fill('');

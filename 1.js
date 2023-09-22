@@ -1,7 +1,6 @@
-const moveSteps = [[0, 1], [1, 0], [1, 1], [-1, 1]];
+// const arr = Array.from({ length: 3 });
+// console.log(arr[1]);
 
-let result = moveSteps.some(([row_step, col_step]) => {
-    return row_step === -1 && col_step === 1;
+Array.from({ length: 3 }).forEach(i => {
+    console.log(i);
 });
-
-console.log(result);
