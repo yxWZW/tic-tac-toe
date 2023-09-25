@@ -6,7 +6,6 @@ import { setType } from '@/store/gameSlice';
 import { connect } from 'react-redux';
 import './App.css';
 
-
 /**
  * 根组件
  * @returns 根组件
@@ -17,8 +16,12 @@ class App extends Component<AppProps, AppState> {
         this.state  = { isRollback: false };
     }
 
-    setIsRollback = (arg: boolean) => {
-        this.setState({ isRollback: arg });
+    /**
+     * 修改回退状态
+     * @param event 回退状态
+     */
+    setIsRollback = (event: boolean) => {
+        this.setState({ isRollback: event });
     }
 
     render (): ReactNode {
@@ -30,15 +33,11 @@ class App extends Component<AppProps, AppState> {
                         <h2>{this.props.typeIndex ? '五子棋' : '井字棋'}</h2>
                     </div>
                     <div className="info-process">
-                        {
-                            <Process isRollback={this.state.isRollback} setIsRollback={this.setIsRollback}/>
-                        }
+                        {<Process isRollback={this.state.isRollback} setIsRollback={this.setIsRollback}/>}
                     </div>
                 </div>
                 <div className="board">
-                    {
-                        <Chessboard isRollback={this.state.isRollback} setIsRollback={this.setIsRollback}/>
-                    }
+                    {<Chessboard isRollback={this.state.isRollback} setIsRollback={this.setIsRollback}/>}
                 </div>
             </div>
         );
@@ -46,6 +45,7 @@ class App extends Component<AppProps, AppState> {
 }
 
 /**
+ * 建立组件跟 store的 state的映射关系
  * @param state
  */
 const mapStateToProps = (state: any) => {
@@ -53,6 +53,7 @@ const mapStateToProps = (state: any) => {
 };
 
 /**
+ * 建立组件跟 store.dispatch的映射关系
  * @param dispatch
  */
 const mapDispatchToProps = (dispatch: any) => {

@@ -24,7 +24,6 @@ export const gameSlice = createSlice({
     initialState,
     reducers: {
         setType: (state) => {
-            // console.log(state.typeIndex);
             state.typeIndex = Number(!state.typeIndex);
         },
         setPlayArr: (state, action) => {

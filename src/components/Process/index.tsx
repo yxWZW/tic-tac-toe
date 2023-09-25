@@ -41,7 +41,6 @@ class Process extends Component<ProcessProps> {
 
 /**
  * @param state
- * @returns
  */
 const mapStateToProps = (state: any) => {
     const { playArr } = state.gameSlice;
@@ -49,9 +48,7 @@ const mapStateToProps = (state: any) => {
 };
 
 /**
- *
  * @param dispatch
- * @returns
  */
 const mapDispatchToProps = (dispatch: any) => {
     return { setCurrentMove: (arg: number) => dispatch(setCurrentMove(arg)) };

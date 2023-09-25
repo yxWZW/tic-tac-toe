@@ -13,10 +13,10 @@ class Chessboard extends Component<ChessboardProps, ChessboardState, ChessboardR
     constructor (props: ChessboardProps) {
         super(props);
         this.state = {
-            isOver: false,                                 // 游戏结束状态
-            showArr: [],                                   // 用于棋盘上展示的落子的集合
-            chessArr: createTargetArr(this.props.size),                                  // 记录当前棋盘上落子的点阵图
-            xIsNext: this.props.currentMove % 2 === 0, // 记录当前落子的类型
+            isOver: false,                              // 游戏结束状态
+            showArr: [],                                // 用于棋盘上展示的落子的集合
+            chessArr: createTargetArr(this.props.size), // 记录当前棋盘上落子的点阵图
+            xIsNext: this.props.currentMove % 2 === 0,  // 记录当前落子的类型
         };
     }
     setPlayArr = this.props.setPlayArr;
@@ -27,6 +27,7 @@ class Chessboard extends Component<ChessboardProps, ChessboardState, ChessboardR
      * @param prevState
      */
     componentDidUpdate (prevProps: ChessboardProps) {
+        // currentMove 发生变化，重新渲染棋盘
         if (prevProps.currentMove !== this.props.currentMove) {
             if (this.props.isRollback) {
                 this.rollbackProcess(this.props.currentMove);
@@ -36,6 +37,7 @@ class Chessboard extends Component<ChessboardProps, ChessboardState, ChessboardR
                 showArr: [...this.props.playArr.slice(0, this.props.currentMove)],
             });
         }
+        // 游戏类型发生变化，重置组件数据源
         if (prevProps.typeIndex !== this.props.typeIndex) {
             this.setState({
                 isOver: false,
@@ -127,9 +129,8 @@ class Chessboard extends Component<ChessboardProps, ChessboardState, ChessboardR
 }
 
 /**
- * redux中的state映射到组件的props
+ * redux中的 state映射到组件的 props
  * @param state
- * @returns
  */
 const mapStateToProps = (state: any) => {
     const { currentMove, playArr, typeIndex, types } = state.gameSlice;
@@ -138,9 +139,8 @@ const mapStateToProps = (state: any) => {
 };
 
 /**
- * redux中的dispatch映射到组件的props
+ * redux中的 dispatch映射到组件的 props
  * @param dispatch
- * @returns
  */
 const mapDispatchToProps = (dispatch: any) => {
     return {
