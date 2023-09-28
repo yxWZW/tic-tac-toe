@@ -18,15 +18,5 @@
 	border: 1px solid rgb(131, 130, 130);
 	width: 25px;
 	height: 25px;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	box-sizing: border-box;
-}
-
-.chessboard-cell-click {
-	width: 20px;
-	height: 20px;
-    position: absolute;
-    z-index: 20;
+    z-index: 50;
 }

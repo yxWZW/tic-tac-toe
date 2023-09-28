@@ -1,15 +1,41 @@
-import { chessInfo } from '@/interfaces/index';
+import { ChessInfo } from '@/interfaces/index';
 
 /**
  * 生成空的二维数组
- * @returns 20*20的空字符串数组
+ * @returns Array 20*20的空字符串数组
  */
 export const createTargetArr = (size: number) => {
     const arr = Array(size).fill('');
-    arr.map((_item, index) => {
+    arr.map((__, index) => {
         arr[index] = Array(size).fill('');
     });
     return arr;
+};
+
+/**
+ * 将普通 Object对象转化为 Map
+ * @param showArr 当前棋盘上棋子的集合
+ * @returns Map<string, ChessInfo> Map类型的棋子集合
+ */
+export const getShowMap = (showArr: Array<ChessInfo>): Map<string, ChessInfo> => {
+    const showMap: Map<string, ChessInfo> = new Map();
+    showArr.forEach((item: ChessInfo) => {
+        showMap.set(`${item.row}-${item.col}`, item);
+    });
+    return showMap;
+};
+
+/**
+ * 将落子集合转化为点阵图
+ * @param showArr 落子集合
+ * @returns Array 点阵图
+ */
+export const chessboardRender = (showArr: Array<ChessInfo>, size: number): Array<Array<ChessInfo>> => {
+    const newChessArr = createTargetArr(size);
+    showArr.forEach((item: ChessInfo) => {
+        newChessArr[item.row][item.col] = { ...item };
+    });
+    return newChessArr;
 };
 
 /**
@@ -20,38 +46,40 @@ export const createTargetArr = (size: number) => {
  * @param chess 后一次落子的类型
  * @param size 棋盘大小
  * @param win 胜利条件
- * @returns 胜负结果
+ * @returns Boolean 胜负结果
  */
-export const countWinChess = (chessArr: Array<Array<chessInfo>>, row: number, col: number, chess: boolean, size: number, win: number): boolean => {
+export const countWinChess = (chessArr: Array<Array<ChessInfo>>, row: number, col: number, chess: boolean, size: number, win: number): boolean => {
     const moveSteps = [[0, 1], [1, 0], [1, 1], [-1, 1]];
 
     /**
-     * 递归遍历最后一次落子某一方向是否存在相同类型的棋子
-     * @param current_row 当前棋子的横坐标
-     * @param current_col 当前棋子的纵坐标
-     * @param row_step 横轴步进
-     * @param col_step 纵轴步进
-     * @returns 连子数量
+     * 计算最后一次落子在某一方向相同类型的棋子形成的子串
+     * @param currentRow 当前棋子的横坐标
+     * @param currentCol 当前棋子的纵坐标
+     * @param rowStep 横轴步进
+     * @param colStep 纵轴步进
+     * @returns string 连子字符串
      */
-    const deepCountWinChess = (current_row: number, current_col: number, row_step: number, col_step: number): number => {
-        if (current_row >= 0 && current_row < size &&
-            current_col >= 0 && current_col < size &&
-            chessArr[current_row][current_col].chess === chess) {
-            return 1 + deepCountWinChess(current_row + row_step, current_col + col_step, row_step, col_step);
+    const substringCountWinChess = (currentRow: number, currentCol: number, rowStep: number, colStep: number): string => {
+        let substringChess = '';
+        for (let xAxis = currentRow, yAxis = currentCol;
+            xAxis >= 0 && xAxis < size &&
+            yAxis >= 0 && yAxis < size &&
+            chessArr[xAxis][yAxis]?.chess === chess;
+            xAxis += rowStep, yAxis += colStep) {
+            substringChess += Number(chessArr[xAxis][yAxis].chess);
         }
-        return 0;
+        return substringChess;
     };
 
     /**
      * 计算最后一次落子某一方向是否存在胜利
-     * @param row_step 横轴步进
-     * @param col_step 纵轴步进
+     * @param rowStep 横轴步进
+     * @param colStep 纵轴步进
      * @returns 连子数量
      */
-    return moveSteps.some(([row_step, col_step]) => {
-        let count = 1;
-        count += deepCountWinChess(row + row_step, col + col_step, row_step, col_step) +
-            deepCountWinChess(row - row_step, col - col_step, -row_step, -col_step);
-        return count >= win;
+    return moveSteps.some(([rowStep, colStep]) => {
+        const resultSub = substringCountWinChess(row + rowStep, col + colStep, rowStep, colStep) +
+            substringCountWinChess(row - rowStep, col - colStep, -rowStep, -colStep);
+        return resultSub.length >= win - 1;
     });
 };

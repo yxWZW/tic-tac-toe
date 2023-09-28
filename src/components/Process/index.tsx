@@ -1,36 +1,45 @@
 import { Component, ReactNode } from 'react';
-import { ProcessProps } from '@/interfaces';
-import { setCurrentMove } from '@/store/gameSlice';
-import { connect } from 'react-redux';
+import { ProcessProps } from '@/interfaces/index';
+import ProcessButton from '@/components/ProcessButton/index';
 import './index.css';
 
 /**
- * 步骤分步展示
- * @param history 历史步骤
- * @param setCurrentMove 改变回退的步骤数的方法
- * @returns 步骤分步展示组件
+ * 步骤展示组件
+ * @param rollbackMove 当前回退数
+ * @param showArrLength 当前棋盘上棋子总数
+ * @param onSetProps 修改父组件数据的方法
  */
 class Process extends Component<ProcessProps> {
+    /**
+     * 控制步骤展示组件的渲染
+     */
+    shouldComponentUpdate (nextProps: ProcessProps) {
+        const { showArrLength, rollbackMove } = this.props;
+        if (showArrLength === nextProps.showArrLength && rollbackMove ===  nextProps.rollbackMove) return false;
+        return true;
+    }
+
+    /**
+     * 修改回退标识的状态
+     * @param move 回退步进
+     */
+    rollbackClick = (move: number) => {
+        const { onSetProps } = this.props;
+        onSetProps(true, 'isRollback');
+        onSetProps(move, 'rollbackMove');
+    };
+
     render (): ReactNode {
-        const { setCurrentMove, playArr } = this.props;
-        const process = Array(playArr.length + 1).fill('');
-
-        /**
-         * 修改回退标识的状态
-         * @param move 回退步进
-         */
-        const rollbackClick = (move: number) => {
-            this.props.setIsRollback(true);
-            setCurrentMove(move);
-        };
-
+        // console.log('Process渲染了');
+        const { showArrLength, rollbackMove } = this.props;
         return (
             <ol>
-                {process.map((_item, move) => {
+                {Array.from({ length: showArrLength + 1 }).map((_item, move) => {
                     const description = move > 0 ? `Go to move #${move}` : 'Go to game start';
+                    const processbuttonProps = { description, move, rollbackMove, rollbackClick: this.rollbackClick };
                     return (
                         <li key={move}>
-                            <button onClick={() => rollbackClick(move)}>{description}</button>
+                            <ProcessButton {...processbuttonProps} />
                         </li>
                     );
                 })}
@@ -39,19 +48,4 @@ class Process extends Component<ProcessProps> {
     }
 }
 
-/**
- * @param state
- */
-const mapStateToProps = (state: any) => {
-    const { playArr } = state.gameSlice;
-    return { playArr };
-};
-
-/**
- * @param dispatch
- */
-const mapDispatchToProps = (dispatch: any) => {
-    return { setCurrentMove: (arg: number) => dispatch(setCurrentMove(arg)) };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Process);
+export default Process;

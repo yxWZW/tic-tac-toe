@@ -1,58 +1,70 @@
 export interface SquareOptions {
     value: Array<string>;
-    showArr: Array<chessInfo>;
-    row: number;
-    col: number;
+    chessType: boolean;
 }
-
-export interface ProcessProps {
-    setCurrentMove: Function;
-    playArr: Array<chessInfo>;
-    isRollback: boolean;
-    setIsRollback: (e: boolean) => void;
-}
-
-export interface chessInfo {
+export interface ChessInfo {
     row: number;
     col: number;
     chess: boolean;
 }
-
 export interface GameType {
     size: number;
     chess: Array<string>;
     win: number;
 }
-
+export interface HistoryInfo {
+    historyResult: boolean;
+    historyArr: Array<ChessInfo>;
+    historyMove: number;
+}
 export interface GameStateOptions {
     types: Array<GameType>;
     typeIndex: number;
-    playArr: Array<chessInfo>;
+    history: Array<HistoryInfo>;
+}
+export interface ProcessProps {
+    showArrLength: number;
+    rollbackMove: number;
+    onSetProps: (e: number | boolean, l: string) => void;
+}
+
+export interface ProcessState {
     currentMove: number;
+}
+export interface ChessboardProps {
+    historyArr: Array<ChessInfo>;
+    historyMove: number;
+    historyResult: boolean;
+    typeIndex: number;
+    size: number;
+    chess: Array<string>;
+    win: number;
+    isRollback: boolean;
+    rollbackMove: number;
+    setHistory: (el: gameHistoryInfo) => void;
+    onSetProps: (e: number | boolean, l: string) => void;
 }
 
 export interface ChessboardState {
     isOver: boolean;
-    xIsNext: boolean;
-    showArr: Array<chessInfo>;
-    chessArr: Array<Array<chessInfo>>;
-}
-
-export interface ChessboardProps {
+    showArr: Array<ChessInfo>;
     currentMove: number;
+    showMap: Map<string, ChessInfo>;
+    xIsNext: boolean;
     typeIndex: number;
-    playArr: Array<chessInfo>;
-    size: number;
-    win: number;
-    chess: Array<string>;
-    isRollback: boolean;
-    setPlayArr: (e: Array<chessInfo>) => void;
-    setCurrentMove: (e: number) => void;
-    setIsRollback: (e: boolean) => void;
 }
 
-export interface ChessboardRefs {
-    rollbackProcess: (e: number) => void;
+export interface ProcessbuttonProps {
+    description: string;
+    rollbackMove: number;
+    move: number;
+    rollbackClick: (e: number) => void;
+}
+
+export interface gameHistoryInfo {
+    historyResult: boolean;
+    historyArr: Array<ChessInfo>;
+    historyMove: number;
 }
 
 export interface AppProps {
@@ -62,5 +74,6 @@ export interface AppProps {
 
 export interface AppState {
     isRollback: boolean;
+    rollbackMove: number;
+    showArrLength: number;
 }
-

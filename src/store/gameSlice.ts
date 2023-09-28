@@ -1,22 +1,31 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { GameStateOptions } from '@/interfaces/index';
 
+// 游戏类型
+const gameTypes = [
+    {
+        size: 3,
+        chess: ['X', 'O'],
+        win: 3,
+    },
+    {
+        size: 15,
+        chess: ['black', 'white'],
+        win: 5,
+    },
+];
+
+// 游戏历史记录
+const gameHistory = Array(gameTypes.length).fill({
+    historyResult: false,
+    historyArr: [],
+    historyMove: 0,
+});
+
 const initialState: GameStateOptions = {
-    types: [ // 游戏类型
-        {
-            size: 3,
-            chess: ['X', 'O'],
-            win: 3,
-        },
-        {
-            size: 15,
-            chess: ['black', 'white'],
-            win: 5,
-        },
-    ],
-    typeIndex: 0, // 游戏类型索引
-    playArr: [],  // 当前棋盘上所有落子形成的集合，包含每个落子的横纵坐标和类型
-    currentMove: 0, // 当前进行的历史状态索引
+    types: gameTypes,     // 游戏类型
+    history: gameHistory, // 游戏历史
+    typeIndex: 0,         // 游戏类型索引
 };
 
 export const gameSlice = createSlice({
@@ -26,14 +35,18 @@ export const gameSlice = createSlice({
         setType: (state) => {
             state.typeIndex = Number(!state.typeIndex);
         },
-        setPlayArr: (state, action) => {
-            state.playArr = [...action.payload];
-        },
-        setCurrentMove: (state, action) => {
-            state.currentMove = action.payload;
+        setHistory: (state, action) => {
+            const { historyResult, historyArr, historyMove } = action.payload;
+            if (historyArr.length > 0) {
+                state.history[Number(!state.typeIndex)] = {
+                    historyResult,
+                    historyArr,
+                    historyMove,
+                };
+            }
         },
     },
 });
 
-export const { setType, setPlayArr, setCurrentMove } = gameSlice.actions;
+export const { setType, setHistory } = gameSlice.actions;
 export default gameSlice.reducer;
