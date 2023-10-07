@@ -18,12 +18,9 @@ class Square extends Component<SquareOptions> {
 
     render (): ReactNode {
         // console.log('Square渲染了');
-        const { chessType, value } = this.props;
-        const chess = value[Number(chessType)] || 'click';
+        const { chessType } = this.props;
         return (
-            <div className={`chessboard-cell-${chess}`}
-                chess-type={`${chess}`}
-            />
+            <div className={`chessboard-cell-${chessType}`} />
         );
     }
 }

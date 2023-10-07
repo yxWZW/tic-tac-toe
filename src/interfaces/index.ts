@@ -1,11 +1,10 @@
 export interface SquareOptions {
-    value: Array<string>;
-    chessType: boolean;
+    chessType: string;
 }
 export interface ChessInfo {
     row: number;
     col: number;
-    chess: boolean;
+    chess: string;
 }
 export interface GameType {
     size: number;
@@ -41,6 +40,7 @@ export interface ChessboardProps {
     win: number;
     isRollback: boolean;
     rollbackMove: number;
+    isFirstAI: boolean;
     setHistory: (el: gameHistoryInfo) => void;
     onSetProps: (e: number | boolean, l: string) => void;
 }
@@ -52,6 +52,7 @@ export interface ChessboardState {
     showMap: Map<string, ChessInfo>;
     xIsNext: boolean;
     typeIndex: number;
+    isFirstAI: boolean;
 }
 
 export interface ProcessbuttonProps {
@@ -73,7 +74,19 @@ export interface AppProps {
 }
 
 export interface AppState {
+    isFirstAI: boolean;
     isRollback: boolean;
     rollbackMove: number;
     showArrLength: number;
+}
+
+export interface pointInfo {
+    row: number;
+    col: number;
+}
+
+export interface bestMoveInfo {
+    row?: number;
+    col?: number;
+    score: number;
 }

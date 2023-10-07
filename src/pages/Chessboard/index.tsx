@@ -4,6 +4,7 @@ import { setHistory } from '@/store/gameSlice';
 import Square from '@/components/Square';
 import { countWinChess, getShowMap, chessboardRender } from '@/utils/tool';
 import { ChessboardProps, ChessboardState, gameHistoryInfo, ChessInfo } from '@/interfaces/index';
+import { makeAIMove } from '@/utils/minimaxAlphaBeta';
 import './index.css';
 
 /**
@@ -23,17 +24,18 @@ import './index.css';
 class Chessboard extends Component<ChessboardProps, ChessboardState> {
     constructor (props: ChessboardProps) {
         super(props);
+        const { historyResult, historyArr, historyMove, typeIndex, isFirstAI } = this.props;
         this.state = {
-            isOver: this.props.historyResult,
-            showArr: this.props.historyArr,
-            currentMove: this.props.historyMove,
-            showMap: getShowMap(this.props.historyArr),
-            xIsNext: this.props.historyMove % 2 === 0,
-            typeIndex: this.props.typeIndex,
+            isOver: historyResult,
+            showArr: historyArr,
+            currentMove: historyMove,
+            showMap: getShowMap(historyArr),
+            xIsNext: historyMove % 2 === 0,
+            typeIndex,
+            isFirstAI,
         };
     }
     setHistory = this.props.setHistory;
-
     /**
      * 游戏类型发生变化，重置组件数据源
      */
@@ -56,8 +58,9 @@ class Chessboard extends Component<ChessboardProps, ChessboardState> {
      * 控制棋盘组件的渲染
      */
     shouldComponentUpdate (nextProps: ChessboardProps) {
-        const { rollbackMove, typeIndex, isRollback } = this.props;
+        const { rollbackMove, typeIndex, isRollback, isFirstAI } = this.props;
         if (nextProps.rollbackMove !== rollbackMove || nextProps.typeIndex !== typeIndex) return true;
+        if (nextProps.isFirstAI !== isFirstAI) return true;
         if (isRollback) return true;
         return false;
     }
@@ -66,7 +69,7 @@ class Chessboard extends Component<ChessboardProps, ChessboardState> {
      * 组件更新之后
      */
     componentDidUpdate (prevProps: ChessboardProps, prevState: ChessboardState) {
-        const { isRollback, rollbackMove, typeIndex, historyArr, historyMove, onSetProps } = this.props;
+        const { isRollback, rollbackMove, typeIndex, historyArr, historyMove, isFirstAI, onSetProps } = this.props;
         // 有历史回退，重新渲染棋盘
         if (isRollback && prevProps.rollbackMove !== rollbackMove) {
             this.rollbackProcess(rollbackMove);
@@ -82,6 +85,10 @@ class Chessboard extends Component<ChessboardProps, ChessboardState> {
             onSetProps(historyMove, 'rollbackMove');
             onSetProps(false, 'isRollback');
         }
+        // 游戏 AI先手发生变化
+        if (prevProps.isFirstAI !== isFirstAI) {
+            this.onceFirstPlay();
+        }
     }
 
     /**
@@ -90,7 +97,7 @@ class Chessboard extends Component<ChessboardProps, ChessboardState> {
      */
     rollbackProcess = (currentMove: number) => {
         const { showArr } = this.state;
-        const { onSetProps } = this.props;
+        const { chess, onSetProps } = this.props;
         const newShowArr = [...showArr.slice(0, currentMove)];
         const showArrEnd = newShowArr[currentMove - 1];
         this.setState({
@@ -99,7 +106,8 @@ class Chessboard extends Component<ChessboardProps, ChessboardState> {
             showMap: getShowMap(newShowArr),
         });
         // 如果回退到最新的一步，才判断是否有胜者出现
-        if (currentMove === showArr.length && this.getWinner(newShowArr, (currentMove - 1) % 2 === 0, showArrEnd.row, showArrEnd.col)) {
+        if (currentMove === showArr.length &&
+            this.getWinner(newShowArr, chess[Number((currentMove - 1) % 2 === 0)], showArrEnd.row, showArrEnd.col)) {
             this.setState({ isOver: true });
         } else {
             this.setState({ isOver: false });
@@ -112,23 +120,24 @@ class Chessboard extends Component<ChessboardProps, ChessboardState> {
      * @param row 落子的横坐标
      * @param col 落子的纵坐标
      */
-    play = (row: number, col: number) => {
-        if (this.state.isOver) return;
+    play = (row: number, col: number): Array<ChessInfo> | null => {
         const { currentMove, showArr, xIsNext } = this.state;
-        const { onSetProps } = this.props;
-        onSetProps(false, 'isRollback');
-        const newShowArr = [...showArr.slice(0, currentMove), { row, col, chess: xIsNext }];
+        const { chess, size, onSetProps } = this.props;
+        if (this.state.isOver || currentMove >= size * size) return null;
+        const newShowArr = [...showArr.slice(0, currentMove), { row, col, chess: chess[Number(xIsNext)] }];
         this.setState({
             showArr: newShowArr,
             currentMove: newShowArr.length,
             xIsNext: newShowArr.length % 2 === 0,
             showMap: getShowMap(newShowArr),
         });
+        onSetProps(false, 'isRollback');
         onSetProps(newShowArr.length, 'showArrLength');
         onSetProps(newShowArr.length, 'rollbackMove');
-        if (this.getWinner(newShowArr, xIsNext, row, col)) {
+        if (this.getWinner(newShowArr, chess[Number(xIsNext)], row, col)) {
             this.setState({ isOver: true });
         }
+        return newShowArr;
     };
 
     /**
@@ -140,7 +149,7 @@ class Chessboard extends Component<ChessboardProps, ChessboardState> {
      * @param col 最后一次落子的纵坐标
      * @returns boolean 最后一次落子是否产生胜者
      */
-    getWinner = (showArr: Array<ChessInfo>, chess: boolean, row: number, col: number): boolean => {
+    getWinner = (showArr: Array<ChessInfo>, chess: string, row: number, col: number): boolean => {
         const { size, win } = this.props;
         const chessArr = chessboardRender(showArr, size);
         return countWinChess(chessArr, row, col, chess, size, win);
@@ -151,10 +160,13 @@ class Chessboard extends Component<ChessboardProps, ChessboardState> {
      * @param event 事件对象
      */
     entrustSquareClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        const { typeIndex } = this.props;
         const el = event.target as HTMLButtonElement;
+        let showArr: Array<ChessInfo> | null = null;
         if (el.getAttribute('class') === 'chessboard-cell') {
-            this.play(Number(el.getAttribute('chess-row')), Number(el.getAttribute('chess-col')));
+            showArr = this.play(Number(el.getAttribute('chess-row')), Number(el.getAttribute('chess-col')));
         }
+        if (showArr && !typeIndex) setTimeout(() => this.playAI(showArr as Array<ChessInfo>), 0);
     };
 
     /**
@@ -175,8 +187,28 @@ class Chessboard extends Component<ChessboardProps, ChessboardState> {
         return title;
     };
 
+
+    /**
+     * AI下棋
+     * @param showArr 当前棋盘上棋子的集合
+     */
+    playAI = (showArr: Array<ChessInfo>) => {
+        const { size, isFirstAI } = this.props;
+        const board = chessboardRender(showArr, size);
+        const { row, col } = makeAIMove(board, !isFirstAI);
+        this.play(row, col);
+    };
+
+    /**
+     * 第一次 AI先手执行的函数
+     */
+    onceFirstPlay = () => {
+        if (this.props.isFirstAI) this.playAI([]);
+        this.onceFirstPlay = () => {};
+    }
+
     render (): ReactNode {
-        const { size, chess } = this.props;
+        const { size } = this.props;
         const { showMap } = this.state;
         // console.log('Chessboard渲染了');
         return (
@@ -192,9 +224,7 @@ class Chessboard extends Component<ChessboardProps, ChessboardState> {
                                     chess-row={`${rowIndex}`} chess-col={`${colIndex}`}>
                                     {
                                         showMap.get(`${rowIndex}-${colIndex}`)
-                                            ? <Square
-                                                chessType={showMap.get(`${rowIndex}-${colIndex}`)?.chess as boolean}
-                                                value={chess} />
+                                            ? <Square chessType={showMap.get(`${rowIndex}-${colIndex}`)?.chess as string}/>
                                             : ''
                                     }
                                 </div>

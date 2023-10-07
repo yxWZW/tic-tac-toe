@@ -1,4 +1,4 @@
-.chessboard-cell-black {
+.chessboard-cell-B {
 	position: relative;
     z-index: 99;
     width: 27px;
@@ -7,7 +7,7 @@
     left: -2px;
 }
 
-.chessboard-cell-black::after {
+.chessboard-cell-B::after {
     content: "";
     position: absolute;
     top: 12%;
@@ -19,7 +19,7 @@
 	box-shadow: 0px 2px 5px 2px #eee;
 }
 
-.chessboard-cell-white {
+.chessboard-cell-W {
 	position: relative;
     z-index: 99;
     width: 27px;
@@ -28,7 +28,7 @@
     left: -2px;
 }
 
-.chessboard-cell-white::after {
+.chessboard-cell-W::after {
     content: "";
     position: absolute;
     top: 12%;

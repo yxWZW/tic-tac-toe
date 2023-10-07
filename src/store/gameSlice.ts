@@ -10,7 +10,7 @@ const gameTypes = [
     },
     {
         size: 15,
-        chess: ['black', 'white'],
+        chess: ['B', 'W'],
         win: 5,
     },
 ];

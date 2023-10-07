@@ -15,10 +15,19 @@ class App extends Component<AppProps, AppState> {
     constructor (props: AppProps) {
         super(props);
         this.state = {
+            isFirstAI: false,  // 是否 AI先手
             isRollback: false, // 当前是否处于回退状态
             rollbackMove: 0,   // 当前回退数
             showArrLength: 0,  // 当前棋盘上棋子总数
         };
+    }
+
+    /**
+     * 游戏先手发生变化
+     */
+    setIsFirstAI = () => {
+        const { isFirstAI } = this.state;
+        this.setState({ isFirstAI: !isFirstAI });
     }
 
     /**
@@ -33,9 +42,9 @@ class App extends Component<AppProps, AppState> {
     }
 
     render (): ReactNode {
-        const { isRollback, rollbackMove, showArrLength } = this.state;
-        const { onSetProps } = this;
-        const ChessboardPropsInfo = { isRollback, rollbackMove, onSetProps };
+        const { isRollback, rollbackMove, showArrLength, isFirstAI } = this.state;
+        const { onSetProps, setIsFirstAI } = this;
+        const ChessboardPropsInfo = { isRollback, rollbackMove, isFirstAI, onSetProps };
         const ProcessPropsInfo = { showArrLength, rollbackMove, onSetProps };
 
         return (
@@ -44,6 +53,13 @@ class App extends Component<AppProps, AppState> {
                     <div className="info-change">
                         <button onClick={() => this.props.setType()}>切换游戏类型</button>
                         <h2>{this.props.typeIndex ? '五子棋' : '井字棋'}</h2>
+                        {
+                            !this.props.typeIndex
+                                ? <button onClick={() => setIsFirstAI()} disabled={Boolean(showArrLength)}>
+                                    { isFirstAI ? 'AI先手' : '玩家先手'}
+                                </button>
+                                : ''
+                        }
                     </div>
                     <div className="info-process">
                         {<Process {...ProcessPropsInfo}/>}

@@ -5,9 +5,9 @@ import { ChessInfo } from '@/interfaces/index';
  * @returns Array 20*20的空字符串数组
  */
 export const createTargetArr = (size: number) => {
-    const arr = Array(size).fill('');
+    const arr = Array(size).fill('-');
     arr.map((__, index) => {
-        arr[index] = Array(size).fill('');
+        arr[index] = Array(size).fill('-');
     });
     return arr;
 };
@@ -30,10 +30,11 @@ export const getShowMap = (showArr: Array<ChessInfo>): Map<string, ChessInfo> =>
  * @param showArr 落子集合
  * @returns Array 点阵图
  */
-export const chessboardRender = (showArr: Array<ChessInfo>, size: number): Array<Array<ChessInfo>> => {
+export const chessboardRender = (showArr: Array<ChessInfo>, size: number): Array<Array<string>> => {
+    // console.log('showArr', showArr);
     const newChessArr = createTargetArr(size);
     showArr.forEach((item: ChessInfo) => {
-        newChessArr[item.row][item.col] = { ...item };
+        newChessArr[item.row][item.col] = item.chess;
     });
     return newChessArr;
 };
@@ -48,7 +49,7 @@ export const chessboardRender = (showArr: Array<ChessInfo>, size: number): Array
  * @param win 胜利条件
  * @returns Boolean 胜负结果
  */
-export const countWinChess = (chessArr: Array<Array<ChessInfo>>, row: number, col: number, chess: boolean, size: number, win: number): boolean => {
+export const countWinChess = (chessArr: Array<Array<string>>, row: number, col: number, chess: string, size: number, win: number): boolean => {
     const moveSteps = [[0, 1], [1, 0], [1, 1], [-1, 1]];
 
     /**
@@ -64,9 +65,9 @@ export const countWinChess = (chessArr: Array<Array<ChessInfo>>, row: number, co
         for (let xAxis = currentRow, yAxis = currentCol;
             xAxis >= 0 && xAxis < size &&
             yAxis >= 0 && yAxis < size &&
-            chessArr[xAxis][yAxis]?.chess === chess;
+            chessArr[xAxis][yAxis] === chess;
             xAxis += rowStep, yAxis += colStep) {
-            substringChess += Number(chessArr[xAxis][yAxis].chess);
+            substringChess += chessArr[xAxis][yAxis];
         }
         return substringChess;
     };
