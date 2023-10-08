@@ -22,6 +22,8 @@ export interface GameStateOptions {
     history: Array<HistoryInfo>;
 }
 export interface ProcessProps {
+    typeIndex: number;
+    isFirstAI: boolean;
     showArrLength: number;
     rollbackMove: number;
     onSetProps: (e: number | boolean, l: string) => void;
@@ -59,6 +61,7 @@ export interface ProcessbuttonProps {
     description: string;
     rollbackMove: number;
     move: number;
+    isClickState: boolean;
     rollbackClick: (e: number) => void;
 }
 
@@ -89,4 +92,18 @@ export interface bestMoveInfo {
     row?: number;
     col?: number;
     score: number;
+}
+
+export interface TitleProps {
+    size: number;
+    chess: Array<string>;
+    isOver: boolean;
+    xIsNext: boolean;
+    currentMove: number;
+}
+
+
+export interface playingTitlesInfo {
+    title: string;
+    chessType: string;
 }

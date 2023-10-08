@@ -44,8 +44,9 @@ class App extends Component<AppProps, AppState> {
     render (): ReactNode {
         const { isRollback, rollbackMove, showArrLength, isFirstAI } = this.state;
         const { onSetProps, setIsFirstAI } = this;
+        const { typeIndex } = this.props;
         const ChessboardPropsInfo = { isRollback, rollbackMove, isFirstAI, onSetProps };
-        const ProcessPropsInfo = { showArrLength, rollbackMove, onSetProps };
+        const ProcessPropsInfo = { showArrLength, rollbackMove, isFirstAI, typeIndex, onSetProps };
 
         return (
             <div className="App">

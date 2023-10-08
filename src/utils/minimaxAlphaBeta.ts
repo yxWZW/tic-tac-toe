@@ -8,7 +8,7 @@ const BOARD_SIZE = size;            // 棋盘大小
 const [PLAYER_X, PLAYER_O] = chess; // 玩家
 const EMPTY_CELL = '-';             // 空格
 const ONCE_WIN_TIME = 5;            // 出现落子一次就能赢的条件
-const MAX_DEPTH = 3;                // 最大递归深度
+let MAX_DEPTH = 2;                // 最大递归深度
 const winningCombinations = [       // 出现获胜的可能
     0b111000000, // 水平线 - 第一行
     0b000111000, // 水平线 - 第二行
@@ -56,6 +56,7 @@ export const makeAIMove = (board: Array<Array<string>>, isFirstAI: boolean): poi
     }
     const bestMove = minimax(board, true, -Infinity, Infinity, MAX_DEPTH);
     const { row, col } = bestMove;
+    MAX_DEPTH += 1; // 随着游戏的进行，增加递归深度
     return { row: row as number, col: col as number };
 };
 
@@ -74,6 +75,12 @@ export const minimax = (board: Array<Array<string>>, maximizingPlayer: boolean, 
     if (depth === 0 || isGameOver(board) || emptyCells.length === 0) {
         return { score: evaluateBoard(board) };
     }
+
+    // console.log('board', board[0], board[1], board[2]);
+    // console.log('alpha', alpha);
+    // console.log('beta', beta);
+    // console.log('alpha', alpha);
+    // console.log('depth', depth);
 
     let bestMove = null;
     if (maximizingPlayer) { // 己方落子环节
@@ -103,6 +110,7 @@ export const minimax = (board: Array<Array<string>>, maximizingPlayer: boolean, 
             if (alpha >= beta) break; // Alpha-Beta剪枝
         }
     }
+    // console.log('bestMove--------------------------------', bestMove);
     return bestMove;
 };
 

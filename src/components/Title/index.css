@@ -1,0 +1,10 @@
+.title-next {
+    display: flex;
+}
+
+.title-next-p {
+    font-display: block;
+    margin-right: 5px;
+    height: 25px;
+    line-height: 20px;
+}

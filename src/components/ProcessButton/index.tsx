@@ -8,21 +8,25 @@ import './index.css';
  * @param move 当前按钮索引
  * @param rollbackMove 当前棋盘历史索引
  * @param rollbackClick 修改当前棋盘历史索引
+ * @param isClickState 根据当前局面是否为AI落子来进行回退按钮禁用
  */
 class ProcessButton extends Component<ProcessbuttonProps> {
     /**
      * 控制回退按钮组件的渲染
      */
     shouldComponentUpdate (nextProps: ProcessbuttonProps) {
-        const { move, rollbackMove } = this.props;
-        if (move !== rollbackMove && move !== nextProps.rollbackMove) return false;
+        const { move, rollbackMove, isClickState } = this.props;
+        if (move !== rollbackMove &&
+            move !== nextProps.rollbackMove &&
+            isClickState === nextProps.isClickState) return false;
         return true;
     }
     render (): ReactNode {
         // console.log('ProcessButton渲染了');
-        const { description, move, rollbackMove, rollbackClick } = this.props;
+        const { description, move, rollbackMove, isClickState, rollbackClick } = this.props;
         return (
             <button onClick={() => rollbackClick(move)}
+                disabled={isClickState}
                 className={`${rollbackMove === move ? 'current-button' : ''}`}>
                 {description}
             </button>

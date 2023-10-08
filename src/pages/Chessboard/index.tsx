@@ -2,6 +2,7 @@ import { Component, ReactNode } from 'react';
 import { connect } from 'react-redux';
 import { setHistory } from '@/store/gameSlice';
 import Square from '@/components/Square';
+import Title from '@/components/Title';
 import { countWinChess, getShowMap, chessboardRender } from '@/utils/tool';
 import { ChessboardProps, ChessboardState, gameHistoryInfo, ChessInfo } from '@/interfaces/index';
 import { makeAIMove } from '@/utils/minimaxAlphaBeta';
@@ -95,7 +96,7 @@ class Chessboard extends Component<ChessboardProps, ChessboardState> {
      * 步骤回退
      * @param currentMove 回退的步骤数
      */
-    rollbackProcess = (currentMove: number) => {
+    rollbackProcess = (currentMove: number): void => {
         const { showArr } = this.state;
         const { chess, onSetProps } = this.props;
         const newShowArr = [...showArr.slice(0, currentMove)];
@@ -159,7 +160,7 @@ class Chessboard extends Component<ChessboardProps, ChessboardState> {
      * 委托棋盘单元格组件的点击事件
      * @param event 事件对象
      */
-    entrustSquareClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    entrustSquareClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>): void => {
         const { typeIndex } = this.props;
         const el = event.target as HTMLButtonElement;
         let showArr: Array<ChessInfo> | null = null;
@@ -170,29 +171,10 @@ class Chessboard extends Component<ChessboardProps, ChessboardState> {
     };
 
     /**
-     * 计算当前游戏进度标题
-     * @returns string 游戏进度标题
-     */
-    playingTitles = (): string => {
-        const { currentMove, xIsNext, isOver } = this.state;
-        const { chess, size } = this.props;
-        let title = '';
-        if (isOver) {
-            title = `Winner: ${chess[Number(!xIsNext)]}`;
-        } else if (currentMove !== size * size && !isOver) {
-            title = `Next player: ${chess[Number(xIsNext)]}`;
-        } else  {
-            title = 'A dead heat';
-        }
-        return title;
-    };
-
-
-    /**
      * AI下棋
      * @param showArr 当前棋盘上棋子的集合
      */
-    playAI = (showArr: Array<ChessInfo>) => {
+    playAI = (showArr: Array<ChessInfo>): void => {
         const { size, isFirstAI } = this.props;
         const board = chessboardRender(showArr, size);
         const { row, col } = makeAIMove(board, isFirstAI);
@@ -202,20 +184,21 @@ class Chessboard extends Component<ChessboardProps, ChessboardState> {
     /**
      * 第一次 AI先手执行的函数
      */
-    onceFirstPlay = () => {
+    onceFirstPlay = (): void => {
         this.playAI([]);
         this.onceFirstPlay = () => {};
     }
 
     render (): ReactNode {
-        const { size } = this.props;
-        const { showMap } = this.state;
+        const { size, chess } = this.props;
+        const { isOver, showMap, xIsNext, currentMove } = this.state;
+        const TitlePropsInfo = { currentMove, xIsNext, isOver, chess, size };
         // console.log('Chessboard渲染了');
         return (
             <div className="chessboard-wrapper">
-                <p className="chessboard-title">
-                    { this.playingTitles() }
-                </p>
+                <div className="chessboard-title">
+                    <Title {...TitlePropsInfo}/>
+                </div>
                 <div className="chessboard" onClick={this.entrustSquareClick}>
                     {Array.from({ length: size }).map((__, rowIndex) => (
                         <div className="chessboard-row" key={`row_${rowIndex}`}>

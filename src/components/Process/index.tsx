@@ -1,4 +1,5 @@
 import { Component, ReactNode } from 'react';
+import { connect } from 'react-redux';
 import { ProcessProps } from '@/interfaces/index';
 import ProcessButton from '@/components/ProcessButton/index';
 import './index.css';
@@ -14,8 +15,10 @@ class Process extends Component<ProcessProps> {
      * 控制步骤展示组件的渲染
      */
     shouldComponentUpdate (nextProps: ProcessProps) {
-        const { showArrLength, rollbackMove } = this.props;
-        if (showArrLength === nextProps.showArrLength && rollbackMove ===  nextProps.rollbackMove) return false;
+        const { showArrLength, rollbackMove, typeIndex } = this.props;
+        if (showArrLength === nextProps.showArrLength &&
+            rollbackMove === nextProps.rollbackMove &&
+            typeIndex === nextProps.typeIndex) return false;
         return true;
     }
 
@@ -31,12 +34,13 @@ class Process extends Component<ProcessProps> {
 
     render (): ReactNode {
         // console.log('Process渲染了');
-        const { showArrLength, rollbackMove } = this.props;
+        const { typeIndex, isFirstAI, showArrLength, rollbackMove } = this.props;
         return (
             <ol>
                 {Array.from({ length: showArrLength + 1 }).map((_item, move) => {
                     const description = move > 0 ? `Go to move #${move}` : 'Go to game start';
-                    const processbuttonProps = { description, move, rollbackMove, rollbackClick: this.rollbackClick };
+                    const isClickState = !typeIndex && (move !== showArrLength) && ((isFirstAI && move % 2 === 0) || (!isFirstAI && move % 2 !== 0));
+                    const processbuttonProps = { description, move, rollbackMove, isClickState, rollbackClick: this.rollbackClick };
                     return (
                         <li key={move}>
                             <ProcessButton {...processbuttonProps} />
@@ -48,4 +52,11 @@ class Process extends Component<ProcessProps> {
     }
 }
 
-export default Process;
+/**
+ * 建立组件跟 store的 state的映射关系
+ */
+const mapStateToProps = (state: any) => {
+    return { typeIndex: state.gameSlice.typeIndex };
+};
+export default connect(mapStateToProps)(Process);
+
