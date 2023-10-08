@@ -195,7 +195,7 @@ class Chessboard extends Component<ChessboardProps, ChessboardState> {
     playAI = (showArr: Array<ChessInfo>) => {
         const { size, isFirstAI } = this.props;
         const board = chessboardRender(showArr, size);
-        const { row, col } = makeAIMove(board, !isFirstAI);
+        const { row, col } = makeAIMove(board, isFirstAI);
         this.play(row, col);
     };
 
@@ -203,7 +203,7 @@ class Chessboard extends Component<ChessboardProps, ChessboardState> {
      * 第一次 AI先手执行的函数
      */
     onceFirstPlay = () => {
-        if (this.props.isFirstAI) this.playAI([]);
+        this.playAI([]);
         this.onceFirstPlay = () => {};
     }
 
