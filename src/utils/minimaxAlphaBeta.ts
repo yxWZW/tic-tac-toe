@@ -9,7 +9,7 @@ const [PLAYER_X, PLAYER_O] = chess; // 玩家
 const EMPTY_CELL = '-';             // 空格
 const ONCE_WIN_TIME = 5;            // 出现落子一次就能赢的条件
 let MAX_DEPTH = 2;                // 最大递归深度
-const winningCombinations = [       // 出现获胜的可能
+const WINNING_COMBINATIONS = [       // 出现获胜的可能
     0b111000000, // 水平线 - 第一行
     0b000111000, // 水平线 - 第二行
     0b000000111, // 水平线 - 第三行
@@ -19,7 +19,7 @@ const winningCombinations = [       // 出现获胜的可能
     0b100010001, // 对角线 - 左上到右下
     0b001010100,  // 对角线 - 右上到左下
 ];
-const boardCount = {                // 玩家局面分数评估
+const BOARD_COUNT = {                // 玩家局面分数评估
     horizontal: [0, 0, 0], // 水平方向
     vertical: [0, 0, 0],   // 垂直方向
     diagonal: [0, 0],      // 对角线方向
@@ -30,7 +30,7 @@ let PLAYER_CURRENT: string;         // 当前玩家类型
 let PLAYER_OPPONENT: string;        // 对手玩家类型
 interface boardCountInfo {
     score: number;
-    counts: typeof boardCount;
+    counts: typeof BOARD_COUNT;
 }
 
 /**
@@ -69,18 +69,12 @@ export const makeAIMove = (board: Array<Array<string>>, isFirstAI: boolean): poi
  * @param depth 遍历深度
  * @returns 最佳落子位置信息
  */
-export const minimax = (board: Array<Array<string>>, maximizingPlayer: boolean, alpha: number, beta: number, depth: number): bestMoveInfo => {
+const minimax = (board: Array<Array<string>>, maximizingPlayer: boolean, alpha: number, beta: number, depth: number): bestMoveInfo => {
     // 达到递归最深度，或游戏有一方获胜，或棋盘已满，返回当前局面的评估值
     const emptyCells = getAvailableMoves(board);
     if (depth === 0 || isGameOver(board) || emptyCells.length === 0) {
         return { score: evaluateBoard(board) };
     }
-
-    // console.log('board', board[0], board[1], board[2]);
-    // console.log('alpha', alpha);
-    // console.log('beta', beta);
-    // console.log('alpha', alpha);
-    // console.log('depth', depth);
 
     let bestMove = null;
     if (maximizingPlayer) { // 己方落子环节
@@ -110,7 +104,6 @@ export const minimax = (board: Array<Array<string>>, maximizingPlayer: boolean, 
             if (alpha >= beta) break; // Alpha-Beta剪枝
         }
     }
-    // console.log('bestMove--------------------------------', bestMove);
     return bestMove;
 };
 
@@ -119,13 +112,13 @@ export const minimax = (board: Array<Array<string>>, maximizingPlayer: boolean, 
  * @param board 棋盘的点阵图
  * @returns 可下棋位置的集合
  */
-export const getAvailableMoves = (board: Array<Array<string>>): Array<pointInfo> => {
-    const moves = [];
-    for (let row = 0; row < BOARD_SIZE; row++) {
-        for (let col = 0; col < BOARD_SIZE; col++) {
-            if (board[row][col] === EMPTY_CELL) moves.push({ row, col });
-        }
-    }
+const getAvailableMoves = (board: Array<Array<string>>): Array<pointInfo> => {
+    const moves: Array<pointInfo> = [];
+    board.forEach((boardRow, row) => {
+        boardRow.forEach((boardCell, col) => {
+            if (boardCell === EMPTY_CELL) moves.push({ row, col });
+        });
+    });
     return moves;
 };
 
@@ -134,7 +127,7 @@ export const getAvailableMoves = (board: Array<Array<string>>): Array<pointInfo>
  * @param board 棋盘的点阵图
  * @returns 游戏进行程度
  */
-export const isGameOver = (board: Array<Array<string>>): boolean => {
+const isGameOver = (board: Array<Array<string>>): boolean => {
     if (checkWinner(board) === EMPTY_CELL) return false;
     return true;
 };
@@ -159,7 +152,7 @@ const checkWinner = (board: Array<Array<string>>): string => {
         replace(regexPlayerCurrent, '0').
         replace(regexEmptyCell, '0'), 2);
 
-    for (const combination of winningCombinations) {
+    for (const combination of WINNING_COMBINATIONS) {
         if ((playerCurrentPositions & combination) === combination) return PLAYER_CURRENT; // 当前玩家获胜
         else if ((playerOpponentPositions & combination) === combination) return PLAYER_OPPONENT;  // 对手玩家获胜
     }
@@ -174,7 +167,7 @@ const checkWinner = (board: Array<Array<string>>): string => {
  * @returns 当前玩家局面分数
  */
 const countsPlayer = (board: Array<Array<string>>, player: string): boardCountInfo => {
-    const counts = JSON.parse(JSON.stringify(boardCount));
+    const counts = JSON.parse(JSON.stringify(BOARD_COUNT));
     for (let row = 0; row < BOARD_SIZE; row++) {
         for (let col = 0; col < BOARD_SIZE; col++) {
             // 统计当前 player玩家在各行，各列，各对角线，对角以及中心上棋子总数

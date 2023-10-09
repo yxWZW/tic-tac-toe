@@ -4,7 +4,7 @@ import { ChessInfo } from '@/interfaces/index';
  * 生成空的二维数组
  * @returns Array 20*20的空字符串数组
  */
-export const createTargetArr = (size: number) => {
+export const createTargetArr = (size: number): Array<Array<string>> => {
     const arr = Array(size).fill('-');
     arr.map((__, index) => {
         arr[index] = Array(size).fill('-');
@@ -31,7 +31,6 @@ export const getShowMap = (showArr: Array<ChessInfo>): Map<string, ChessInfo> =>
  * @returns Array 点阵图
  */
 export const chessboardRender = (showArr: Array<ChessInfo>, size: number): Array<Array<string>> => {
-    // console.log('showArr', showArr);
     const newChessArr = createTargetArr(size);
     showArr.forEach((item: ChessInfo) => {
         newChessArr[item.row][item.col] = item.chess;

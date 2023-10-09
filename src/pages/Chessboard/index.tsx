@@ -142,7 +142,7 @@ class Chessboard extends Component<ChessboardProps, ChessboardState> {
     };
 
     /**
-     * 计算胜者
+     * 获取胜负结果
      * @param showArr 当前棋盘中所有落子 坐标信息
      * @param chess 最后一次落子的类型（是黑子还是白子）
      * @param chessArr 当前棋盘上落子的点阵图
@@ -193,7 +193,6 @@ class Chessboard extends Component<ChessboardProps, ChessboardState> {
         const { size, chess } = this.props;
         const { isOver, showMap, xIsNext, currentMove } = this.state;
         const TitlePropsInfo = { currentMove, xIsNext, isOver, chess, size };
-        // console.log('Chessboard渲染了');
         return (
             <div className="chessboard-wrapper">
                 <div className="chessboard-title">

@@ -8,6 +8,9 @@
 - 进入根路径，运行 `npm install` 安装依赖
 - 运行 `npm run dev`，打开网址 `http://127.0.0.1:8080/` 即可看到项目
 
+## commitlint
+- npx commitlint --from=HEAD~1 检测commit规范 
+
 
 ## 极小化极大算法
 

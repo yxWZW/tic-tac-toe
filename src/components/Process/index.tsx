@@ -33,7 +33,6 @@ class Process extends Component<ProcessProps> {
     };
 
     render (): ReactNode {
-        // console.log('Process渲染了');
         const { typeIndex, isFirstAI, showArrLength, rollbackMove } = this.props;
         return (
             <ol>

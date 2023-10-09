@@ -102,7 +102,6 @@ export interface TitleProps {
     currentMove: number;
 }
 
-
 export interface playingTitlesInfo {
     title: string;
     chessType: string;

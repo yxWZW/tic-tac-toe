@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { GameStateOptions } from '@/interfaces/index';
 
 // 游戏类型
-const gameTypes = [
+const GAME_TYES = [
     {
         size: 3,
         chess: ['X', 'O'],
@@ -16,16 +16,16 @@ const gameTypes = [
 ];
 
 // 游戏历史记录
-const gameHistory = Array(gameTypes.length).fill({
+const GAME_HISTORY = Array(GAME_TYES.length).fill({
     historyResult: false,
     historyArr: [],
     historyMove: 0,
 });
 
 const initialState: GameStateOptions = {
-    types: gameTypes,     // 游戏类型
-    history: gameHistory, // 游戏历史
-    typeIndex: 0,         // 游戏类型索引
+    types: GAME_TYES,      // 游戏类型
+    history: GAME_HISTORY, // 游戏历史
+    typeIndex: 0,          // 游戏类型索引
 };
 
 export const gameSlice = createSlice({

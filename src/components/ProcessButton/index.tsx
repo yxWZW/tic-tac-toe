@@ -22,7 +22,6 @@ class ProcessButton extends Component<ProcessbuttonProps> {
         return true;
     }
     render (): ReactNode {
-        // console.log('ProcessButton渲染了');
         const { description, move, rollbackMove, isClickState, rollbackClick } = this.props;
         return (
             <button onClick={() => rollbackClick(move)}
