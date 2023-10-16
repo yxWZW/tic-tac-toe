@@ -8,8 +8,7 @@ const BOARD_SIZE = size;            // 棋盘大小
 const [PLAYER_X, PLAYER_O] = chess; // 玩家
 const EMPTY_CELL = '-';             // 空格
 const ONCE_WIN_TIME = 5;            // 出现落子一次就能赢的条件
-let MAX_DEPTH = 2;                // 最大递归深度
-const WINNING_COMBINATIONS = [       // 出现获胜的可能
+const WINNING_COMBINATIONS = [      // 出现获胜的可能
     0b111000000, // 水平线 - 第一行
     0b000111000, // 水平线 - 第二行
     0b000000111, // 水平线 - 第三行
@@ -19,13 +18,14 @@ const WINNING_COMBINATIONS = [       // 出现获胜的可能
     0b100010001, // 对角线 - 左上到右下
     0b001010100,  // 对角线 - 右上到左下
 ];
-const BOARD_COUNT = {                // 玩家局面分数评估
+const BOARD_COUNT = {               // 玩家局面分数评估
     horizontal: [0, 0, 0], // 水平方向
     vertical: [0, 0, 0],   // 垂直方向
     diagonal: [0, 0],      // 对角线方向
     cornerControl: 0,      // 控制的角落位置
     centerControl: 0,      // 中心位置控制
 };
+let MAX_DEPTH = 2;                  // 最大递归深度
 let PLAYER_CURRENT: string;         // 当前玩家类型
 let PLAYER_OPPONENT: string;        // 对手玩家类型
 interface boardCountInfo {
@@ -39,7 +39,7 @@ interface boardCountInfo {
  * @param isFirstAI AI是否先手
  * @returns 最佳落子坐标
  */
-export const makeAIMove = (board: Array<Array<string>>, isFirstAI: boolean): pointInfo => {
+export const createAIMove = (board: Array<Array<string>>, isFirstAI: boolean): pointInfo => {
     PLAYER_CURRENT = isFirstAI ? PLAYER_O : PLAYER_X;
     PLAYER_OPPONENT = !isFirstAI ? PLAYER_O : PLAYER_X;
     // 如果出现一次就能赢的局面

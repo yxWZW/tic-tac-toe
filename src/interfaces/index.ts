@@ -26,7 +26,7 @@ export interface ProcessProps {
     isFirstAI: boolean;
     showArrLength: number;
     rollbackMove: number;
-    onSetProps: (e: number | boolean, l: string) => void;
+    setProps: (e: number | boolean, l: string) => void;
 }
 
 export interface ProcessState {
@@ -44,7 +44,7 @@ export interface ChessboardProps {
     rollbackMove: number;
     isFirstAI: boolean;
     setHistory: (el: gameHistoryInfo) => void;
-    onSetProps: (e: number | boolean, l: string) => void;
+    setProps: (e: number | boolean, l: string) => void;
 }
 
 export interface ChessboardState {

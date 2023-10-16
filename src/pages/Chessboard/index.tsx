@@ -5,7 +5,7 @@ import Square from '@/components/Square';
 import Title from '@/components/Title';
 import { countWinChess, getShowMap, chessboardRender } from '@/utils/tool';
 import { ChessboardProps, ChessboardState, gameHistoryInfo, ChessInfo } from '@/interfaces/index';
-import { makeAIMove } from '@/utils/minimaxAlphaBeta';
+import { createAIMove } from '@/utils/minimaxAlphaBeta';
 import './index.css';
 
 /**
@@ -20,7 +20,7 @@ import './index.css';
  * @param isRollback 当前游戏是否为回退状态
  * @param rollbackMove 当前回退数
  * @param setHistory 修改redux历史记录
- * @param onSetProps 修改父组件数据的方法
+ * @param setProps 修改父组件数据的方法
  */
 class Chessboard extends Component<ChessboardProps, ChessboardState> {
     constructor (props: ChessboardProps) {
@@ -70,7 +70,7 @@ class Chessboard extends Component<ChessboardProps, ChessboardState> {
      * 组件更新之后
      */
     componentDidUpdate (prevProps: ChessboardProps, prevState: ChessboardState) {
-        const { isRollback, rollbackMove, typeIndex, historyArr, historyMove, isFirstAI, onSetProps } = this.props;
+        const { isRollback, rollbackMove, typeIndex, historyArr, historyMove, isFirstAI, setProps } = this.props;
         // 有历史回退，重新渲染棋盘
         if (isRollback && prevProps.rollbackMove !== rollbackMove) {
             this.rollbackProcess(rollbackMove);
@@ -82,9 +82,9 @@ class Chessboard extends Component<ChessboardProps, ChessboardState> {
                 historyArr: prevState.showArr,
                 historyMove: prevState.currentMove,
             });
-            onSetProps(historyArr.length, 'showArrLength');
-            onSetProps(historyMove, 'rollbackMove');
-            onSetProps(false, 'isRollback');
+            setProps(historyArr.length, 'showArrLength');
+            setProps(historyMove, 'rollbackMove');
+            setProps(false, 'isRollback');
         }
         // 游戏 AI先手发生变化
         if (prevProps.isFirstAI !== isFirstAI) {
@@ -98,7 +98,7 @@ class Chessboard extends Component<ChessboardProps, ChessboardState> {
      */
     rollbackProcess = (currentMove: number): void => {
         const { showArr } = this.state;
-        const { chess, onSetProps } = this.props;
+        const { chess, setProps } = this.props;
         const newShowArr = [...showArr.slice(0, currentMove)];
         const showArrEnd = newShowArr[currentMove - 1];
         this.setState({
@@ -113,7 +113,7 @@ class Chessboard extends Component<ChessboardProps, ChessboardState> {
         } else {
             this.setState({ isOver: false });
         }
-        onSetProps(false, 'isRollback');
+        setProps(false, 'isRollback');
     };
 
     /**
@@ -123,7 +123,7 @@ class Chessboard extends Component<ChessboardProps, ChessboardState> {
      */
     play = (row: number, col: number): Array<ChessInfo> | null => {
         const { currentMove, showArr, xIsNext } = this.state;
-        const { chess, size, onSetProps } = this.props;
+        const { chess, size, setProps } = this.props;
         if (this.state.isOver || currentMove >= size * size) return null;
         const newShowArr = [...showArr.slice(0, currentMove), { row, col, chess: chess[Number(xIsNext)] }];
         this.setState({
@@ -132,9 +132,9 @@ class Chessboard extends Component<ChessboardProps, ChessboardState> {
             xIsNext: newShowArr.length % 2 === 0,
             showMap: getShowMap(newShowArr),
         });
-        onSetProps(false, 'isRollback');
-        onSetProps(newShowArr.length, 'showArrLength');
-        onSetProps(newShowArr.length, 'rollbackMove');
+        setProps(false, 'isRollback');
+        setProps(newShowArr.length, 'showArrLength');
+        setProps(newShowArr.length, 'rollbackMove');
         if (this.getWinner(newShowArr, chess[Number(xIsNext)], row, col)) {
             this.setState({ isOver: true });
         }
@@ -160,7 +160,7 @@ class Chessboard extends Component<ChessboardProps, ChessboardState> {
      * 委托棋盘单元格组件的点击事件
      * @param event 事件对象
      */
-    entrustSquareClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>): void => {
+    onSquareClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>): void => {
         const { typeIndex } = this.props;
         const el = event.target as HTMLButtonElement;
         let showArr: Array<ChessInfo> | null = null;
@@ -177,7 +177,7 @@ class Chessboard extends Component<ChessboardProps, ChessboardState> {
     playAI = (showArr: Array<ChessInfo>): void => {
         const { size, isFirstAI } = this.props;
         const board = chessboardRender(showArr, size);
-        const { row, col } = makeAIMove(board, isFirstAI);
+        const { row, col } = createAIMove(board, isFirstAI);
         this.play(row, col);
     };
 
@@ -190,6 +190,7 @@ class Chessboard extends Component<ChessboardProps, ChessboardState> {
     }
 
     render (): ReactNode {
+        const { onSquareClick } = this;
         const { size, chess } = this.props;
         const { isOver, showMap, xIsNext, currentMove } = this.state;
         const TitlePropsInfo = { currentMove, xIsNext, isOver, chess, size };
@@ -198,7 +199,7 @@ class Chessboard extends Component<ChessboardProps, ChessboardState> {
                 <div className="chessboard-title">
                     <Title {...TitlePropsInfo}/>
                 </div>
-                <div className="chessboard" onClick={this.entrustSquareClick}>
+                <div className="chessboard" onClick={onSquareClick}>
                     {Array.from({ length: size }).map((__, rowIndex) => (
                         <div className="chessboard-row" key={`row_${rowIndex}`}>
                             {Array.from({ length: size }).map((__, colIndex) => (

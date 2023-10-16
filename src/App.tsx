@@ -25,7 +25,7 @@ class App extends Component<AppProps, AppState> {
     /**
      * 游戏先手发生变化
      */
-    setIsFirstAI = () => {
+    onSetIsFirstAI = () => {
         const { isFirstAI } = this.state;
         this.setState({ isFirstAI: !isFirstAI });
     }
@@ -35,7 +35,7 @@ class App extends Component<AppProps, AppState> {
      * @param value 修改之后的值
      * @param type 变量类型
      */
-    onSetProps = (value: number | boolean, type: string) => {
+    setProps = (value: number | boolean, type: string) => {
         if (type === 'isRollback') this.setState({ isRollback: value as boolean });
         else if (type === 'rollbackMove') this.setState({ rollbackMove: value as number });
         else if (type === 'showArrLength') this.setState({ showArrLength: value as number });
@@ -43,20 +43,20 @@ class App extends Component<AppProps, AppState> {
 
     render (): ReactNode {
         const { isRollback, rollbackMove, showArrLength, isFirstAI } = this.state;
-        const { onSetProps, setIsFirstAI } = this;
-        const { typeIndex } = this.props;
-        const ChessboardPropsInfo = { isRollback, rollbackMove, isFirstAI, onSetProps };
-        const ProcessPropsInfo = { showArrLength, rollbackMove, isFirstAI, typeIndex, onSetProps };
+        const { setProps, onSetIsFirstAI } = this;
+        const { typeIndex, setType } = this.props;
+        const ChessboardPropsInfo = { isRollback, rollbackMove, isFirstAI, setProps };
+        const ProcessPropsInfo = { showArrLength, rollbackMove, isFirstAI, typeIndex, setProps };
 
         return (
             <div className="App">
                 <div className="info">
                     <div className="info-change">
-                        <button onClick={() => this.props.setType()}>切换游戏类型</button>
-                        <h2>{this.props.typeIndex ? '五子棋' : '井字棋'}</h2>
+                        <button onClick={() => setType()}>切换游戏类型</button>
+                        <h2>{typeIndex ? '五子棋' : '井字棋'}</h2>
                         {
-                            !this.props.typeIndex
-                                ? <button onClick={() => setIsFirstAI()} disabled={Boolean(showArrLength)}>
+                            !typeIndex
+                                ? <button onClick={() => onSetIsFirstAI()} disabled={Boolean(showArrLength)}>
                                     { isFirstAI ? 'AI先手' : '玩家先手'}
                                 </button>
                                 : ''

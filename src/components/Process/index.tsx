@@ -8,7 +8,7 @@ import './index.css';
  * 步骤展示组件
  * @param rollbackMove 当前回退数
  * @param showArrLength 当前棋盘上棋子总数
- * @param onSetProps 修改父组件数据的方法
+ * @param setProps 修改父组件数据的方法
  */
 class Process extends Component<ProcessProps> {
     /**
@@ -27,9 +27,9 @@ class Process extends Component<ProcessProps> {
      * @param move 回退步进
      */
     rollbackClick = (move: number) => {
-        const { onSetProps } = this.props;
-        onSetProps(true, 'isRollback');
-        onSetProps(move, 'rollbackMove');
+        const { setProps } = this.props;
+        setProps(true, 'isRollback');
+        setProps(move, 'rollbackMove');
     };
 
     render (): ReactNode {
