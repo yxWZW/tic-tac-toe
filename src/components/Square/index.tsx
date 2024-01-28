@@ -11,12 +11,12 @@ class Square extends Component<SquareOptions> {
     /**
      * 控制棋子组件的渲染
      */
-    shouldComponentUpdate (nextProps: SquareOptions) {
+    shouldComponentUpdate(nextProps: SquareOptions) {
         if (this.props.chessType === nextProps.chessType) return false;
         return true;
     }
 
-    render (): ReactNode {
+    render(): ReactNode {
         const { chessType } = this.props;
         return (
             <div className={`chessboard-cell-${chessType}`} />
