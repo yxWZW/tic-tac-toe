@@ -12,7 +12,7 @@ import './App.css';
  * @param setType 修改游戏类型索引
  */
 class App extends Component<AppProps, AppState> {
-    constructor (props: AppProps) {
+    constructor(props: AppProps) {
         super(props);
         this.state = {
             isFirstAI: false,  // 是否 AI先手
@@ -41,7 +41,7 @@ class App extends Component<AppProps, AppState> {
         else if (type === 'showArrLength') this.setState({ showArrLength: value as number });
     }
 
-    render (): ReactNode {
+    render(): ReactNode {
         const { isRollback, rollbackMove, showArrLength, isFirstAI } = this.state;
         const { setProps, onSetIsFirstAI } = this;
         const { typeIndex, setType } = this.props;
@@ -57,17 +57,17 @@ class App extends Component<AppProps, AppState> {
                         {
                             !typeIndex
                                 ? <button onClick={() => onSetIsFirstAI()} disabled={Boolean(showArrLength)}>
-                                    { isFirstAI ? 'AI先手' : '玩家先手'}
+                                    {isFirstAI ? 'AI先手' : '玩家先手'}
                                 </button>
                                 : ''
                         }
                     </div>
                     <div className="info-process">
-                        {<Process {...ProcessPropsInfo}/>}
+                        {<Process {...ProcessPropsInfo} />}
                     </div>
                 </div>
                 <div className="board">
-                    {<Chessboard {...ChessboardPropsInfo}/>}
+                    {<Chessboard {...ChessboardPropsInfo} />}
                 </div>
             </div>
         );

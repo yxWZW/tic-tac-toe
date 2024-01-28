@@ -14,14 +14,14 @@ class ProcessButton extends Component<ProcessbuttonProps> {
     /**
      * 控制回退按钮组件的渲染
      */
-    shouldComponentUpdate (nextProps: ProcessbuttonProps) {
+    shouldComponentUpdate(nextProps: ProcessbuttonProps) {
         const { move, rollbackMove, isClickState } = this.props;
         if (move !== rollbackMove &&
             move !== nextProps.rollbackMove &&
             isClickState === nextProps.isClickState) return false;
         return true;
     }
-    render (): ReactNode {
+    render(): ReactNode {
         const { description, move, rollbackMove, isClickState, rollbackClick } = this.props;
         return (
             <button onClick={() => rollbackClick(move)}

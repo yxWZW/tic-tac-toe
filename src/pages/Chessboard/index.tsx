@@ -23,7 +23,7 @@ import './index.css';
  * @param setProps 修改父组件数据的方法
  */
 class Chessboard extends Component<ChessboardProps, ChessboardState> {
-    constructor (props: ChessboardProps) {
+    constructor(props: ChessboardProps) {
         super(props);
         const { historyResult, historyArr, historyMove, typeIndex, isFirstAI } = this.props;
         this.state = {
@@ -40,7 +40,7 @@ class Chessboard extends Component<ChessboardProps, ChessboardState> {
     /**
      * 游戏类型发生变化，重置组件数据源
      */
-    static getDerivedStateFromProps (nextProps: ChessboardProps, prevState: ChessboardState) {
+    static getDerivedStateFromProps(nextProps: ChessboardProps, prevState: ChessboardState) {
         const { typeIndex, historyResult, historyArr, historyMove } = nextProps;
         if (typeIndex !== prevState.typeIndex) {
             return {
@@ -58,7 +58,7 @@ class Chessboard extends Component<ChessboardProps, ChessboardState> {
     /**
      * 控制棋盘组件的渲染
      */
-    shouldComponentUpdate (nextProps: ChessboardProps) {
+    shouldComponentUpdate(nextProps: ChessboardProps) {
         const { rollbackMove, typeIndex, isRollback, isFirstAI } = this.props;
         if (nextProps.rollbackMove !== rollbackMove || nextProps.typeIndex !== typeIndex) return true;
         if (nextProps.isFirstAI !== isFirstAI) return true;
@@ -69,7 +69,7 @@ class Chessboard extends Component<ChessboardProps, ChessboardState> {
     /**
      * 组件更新之后
      */
-    componentDidUpdate (prevProps: ChessboardProps, prevState: ChessboardState) {
+    componentDidUpdate(prevProps: ChessboardProps, prevState: ChessboardState) {
         const { isRollback, rollbackMove, typeIndex, historyArr, historyMove, isFirstAI, setProps } = this.props;
         // 有历史回退，重新渲染棋盘
         if (isRollback && prevProps.rollbackMove !== rollbackMove) {
@@ -186,10 +186,10 @@ class Chessboard extends Component<ChessboardProps, ChessboardState> {
      */
     onceFirstPlay = (): void => {
         this.playAI([]);
-        this.onceFirstPlay = () => {};
+        this.onceFirstPlay = () => { };
     }
 
-    render (): ReactNode {
+    render(): ReactNode {
         const { onSquareClick } = this;
         const { size, chess } = this.props;
         const { isOver, showMap, xIsNext, currentMove } = this.state;
@@ -197,7 +197,7 @@ class Chessboard extends Component<ChessboardProps, ChessboardState> {
         return (
             <div className="chessboard-wrapper">
                 <div className="chessboard-title">
-                    <Title {...TitlePropsInfo}/>
+                    <Title {...TitlePropsInfo} />
                 </div>
                 <div className="chessboard" onClick={onSquareClick}>
                     {Array.from({ length: size }).map((__, rowIndex) => (
@@ -207,7 +207,7 @@ class Chessboard extends Component<ChessboardProps, ChessboardState> {
                                     chess-row={`${rowIndex}`} chess-col={`${colIndex}`}>
                                     {
                                         showMap.get(`${rowIndex}-${colIndex}`)
-                                            ? <Square chessType={showMap.get(`${rowIndex}-${colIndex}`)?.chess as string}/>
+                                            ? <Square chessType={showMap.get(`${rowIndex}-${colIndex}`)?.chess as string} />
                                             : ''
                                     }
                                 </div>
@@ -234,7 +234,7 @@ const mapStateToProps = (state: any) => {
  * redux中的 dispatch映射到组件的 props
  */
 const mapDispatchToProps = (dispatch: any) => {
-    return { setHistory: (el: gameHistoryInfo)  => dispatch(setHistory(el)) };
+    return { setHistory: (el: gameHistoryInfo) => dispatch(setHistory(el)) };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Chessboard);

@@ -14,7 +14,7 @@ class Process extends Component<ProcessProps> {
     /**
      * 控制步骤展示组件的渲染
      */
-    shouldComponentUpdate (nextProps: ProcessProps) {
+    shouldComponentUpdate(nextProps: ProcessProps) {
         const { showArrLength, rollbackMove, typeIndex } = this.props;
         if (showArrLength === nextProps.showArrLength &&
             rollbackMove === nextProps.rollbackMove &&
@@ -32,7 +32,7 @@ class Process extends Component<ProcessProps> {
         setProps(move, 'rollbackMove');
     };
 
-    render (): ReactNode {
+    render(): ReactNode {
         const { typeIndex, isFirstAI, showArrLength, rollbackMove } = this.props;
         return (
             <ol>
